@@ -122,6 +122,7 @@ body{overflow-x:hidden}
   <span class="badge">• Orleix : 11 Route de Rabastens, 65800</span>
   <span class="badge">• Horgues : 21 Rue du Pic du Midi, 65310</span>
   <span class="badge">• Adé : 3 Av. des Pyrénées, 65100</span>
+  <span class="badge">• Lourdes : 4 Rue Lucien Pourxet, 65100</span>
 </div>
     <div class="route-bar">
       <a id="routeBtn" class="btn" href="#" target="_blank" rel="noopener" disabled>Itinéraire ➜</a>
@@ -152,7 +153,7 @@ body{overflow-x:hidden}
 </section>
 
 <script>
-// --- Leaflet map avec géocodage Nominatim pour placer précisément les 3 adresses
+// --- Leaflet map avec géocodage Nominatim pour placer précisément les adresses
 const map = L.map('map', { scrollWheelZoom:false });
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '&copy; OpenStreetMap'}).addTo(map);
 
@@ -161,7 +162,8 @@ const addresses = [
   { name: 'Séméac : 111 Avenue des Sports', address: '111 Avenue des Sports, 65600 Séméac, France' },
   { name: 'Orleix : 11 Route de Rabastens', address: '11 Route de Rabastens, 65800 Orleix, France' },
   { name: 'Horgues : 21 Rue du Pic du Midi', address: '21 Rue du Pic du Midi, 65310 Horgues, France' },
-  { name: 'Adé : 3 Avenue des Pyrénées', address: '3 Avenue des Pyrénées, 65100 Adé, France' }
+  { name: 'Adé : 3 Avenue des Pyrénées', address: '3 Avenue des Pyrénées, 65100 Adé, France' },
+  { name: 'Lourdes : 4 Rue Lucien Pourxet', address: '4 Rue Lucien Pourxet, 65100 Lourdes, France' }
 ];
 
 const routeBtn = document.getElementById('routeBtn');
