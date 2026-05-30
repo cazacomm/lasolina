@@ -84,7 +84,7 @@
   <link rel="dns-prefetch" href="//fonts.gstatic.com" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700;900&family=Open+Sans:wght@400;700&family=Space+Grotesk:wght@500;700&family=League+Spartan:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700;900&family=Open+Sans:wght@400;700&family=Space+Grotesk:wght@500;700&family=League+Spartan:wght@600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- ═══════════════════════════════════════════════════════════
        DONNÉES STRUCTURÉES  (Schema.org – JSON-LD)
@@ -191,7 +191,7 @@
   
   <style>
 :root{--c-hero:#d1f3ff;--c-text:#000;--c-deep:#122432;--c-accent:#0e2e42;--c-red:#c0272d;--c-red2:#db4f4c;--c-white:#fff;--container:1200px;--radius:16px;--shadow:0 10px 30px rgba(0,0,0,.15);--transition:.3s ease;--h1:clamp(28px,5.6vw,92px);--h2:clamp(28px,4.2vw,72px);--h3:clamp(18px,2vw,28px)}
-:root{--ff-title:'Antonio',system-ui,sans-serif;--ff-body:'Open Sans',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;--ff-btn:'Space Grotesk','Antonio',system-ui,sans-serif;--ff-price:'Space Grotesk','Antonio',sans-serif;--ff-pizza:'League Spartan','Antonio',sans-serif}
+:root{--ff-title:'Antonio',system-ui,sans-serif;--ff-body:'Open Sans',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;--ff-btn:'Space Grotesk','Antonio',system-ui,sans-serif;--ff-price:'Space Grotesk','Antonio',sans-serif;--ff-pizza:'League Spartan','Antonio',sans-serif;--ff-card:'Poppins',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
 /* === ajout variable azur foncé pour le header scrolled === */
 :root{--c-azur:#122432;} /* ajuste si besoin */
 
@@ -265,15 +265,26 @@ nav a:hover{opacity:1}
 .carte-head{display:flex;align-items:center;gap:24px;margin-bottom:36px}
 .carte-head h2{font-family:var(--ff-title);font-size:var(--h2);margin:0;color:#e3f3ff}
 .carte-head .call{margin-left:auto}
-.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:22px;margin:28px 0 14px 0}
-.tab{padding:16px 22px;border-radius:12px;background:#d1f3ff;color:#0e2e42;font-weight:900;border:2px solid transparent;cursor:pointer;user-select:none;font-family:var(--ff-btn);text-align:center;font-size:clamp(16px,1.6vw,20px);box-shadow:0 4px 0 rgba(0,0,0,.2)}
-.tab.active{background:transparent;color:#fff;border-color:var(--c-red);box-shadow:0 0 0 rgba(0,0,0,0)}
-.carte-viewport{height:520px;border-top:1px solid #fff2;border-bottom:1px solid #fff2;overflow:auto;padding:12px 2px}
-.pizza-grid{display:grid;grid-template-columns:1fr 1fr;gap:34px;padding:18px 2px}
-.pizza h3{margin:0 0 6px 0;color:#d1f3ff;letter-spacing:.02em;font-family:var(--ff-pizza);display:flex;justify-content:space-between;align-items:baseline}
-.pizza .price{color:var(--c-red2);font-weight:900;font-family:var(--ff-price);margin-left:12px}
-.pizza p{margin:8px 0 0 0;color:#fff;opacity:.9;font-family:var(--ff-body)}
-.hr{height:1px;background:#fff;margin:12px 0;opacity:.35}
+/* Panneau blanc : englobe les onglets + la zone de navigation */
+.carte-panel{background:#fff;border-radius:20px;padding:22px 22px 10px;box-shadow:0 18px 40px rgba(0,0,0,.28)}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin:4px 0 16px 0}
+.tab{padding:14px 20px;border-radius:12px;background:#eef5f9;color:#0e2e42;font-weight:700;border:2px solid transparent;cursor:pointer;user-select:none;font-family:var(--ff-card);text-align:center;font-size:clamp(15px,1.5vw,18px);transition:background .18s ease,color .18s ease,box-shadow .18s ease}
+.tab:hover{background:#e2eef4}
+.tab.active{background:var(--c-red);color:#fff;border-color:var(--c-red);box-shadow:0 6px 16px rgba(192,39,45,.35)}
+.swipe-hint{display:none}
+.carte-viewport{height:520px;border-top:1px solid #e7edf1;overflow:auto;padding:8px 2px}
+.pizza-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 40px;padding:14px 6px}
+/* Titre pizza + prix : même taille de police, couleurs distinctes, police carte */
+.pizza{font-family:var(--ff-card)}
+.pizza h3{margin:0 0 6px 0;letter-spacing:0;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px 16px;font-size:clamp(17px,2vw,20px);line-height:1.3;font-family:var(--ff-card)}
+.pizza .pizza-name{font-family:var(--ff-card);color:var(--c-deep);font-weight:700}
+.pizza .prices{display:inline-flex;align-items:baseline;gap:16px;white-space:nowrap}
+.pizza .psz{display:inline-flex;align-items:baseline;gap:5px}
+/* indicateur de format (diamètre) : discret, plus petit que le titre */
+.pizza .dia{font-family:var(--ff-card);font-weight:600;font-size:.62em;color:#8a99a3;letter-spacing:.01em}
+.pizza .price{color:var(--c-red);font-weight:700;font-family:var(--ff-card);font-size:1em}
+.pizza p{margin:6px 0 0 0;color:#55636d;opacity:1;font-family:var(--ff-card);font-size:14px;line-height:1.5}
+.hr{height:1px;background:#e7edf1;margin:12px 0;opacity:1}
 
 /* Section 4 — FAQ */
 #faq{background:var(--c-deep) url('images/faq-bg.jpeg') center/cover fixed;color:#fff;padding:80px 0}
@@ -331,7 +342,14 @@ nav a:hover{opacity:1}
   .socials{justify-content:center}
   .hero-title{font-size:clamp(44px,9.5vw,72px)}
   .hero-right{display:block;min-height:40vh}
-  .tabs{grid-template-columns:repeat(2,1fr);gap:14px}
+  /* Onglets carte : barre horizontale défilable (swipe) avec indice visuel */
+  .carte-panel{padding:16px 14px 6px;border-radius:16px}
+  .tabs{display:flex;grid-template-columns:none;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;scroll-padding:0 14px;-webkit-overflow-scrolling:touch;padding:2px 2px 10px;margin:2px 0 6px;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%)}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;scroll-snap-align:center;white-space:nowrap;padding:12px 18px}
+  /* indice "glissez" */
+  .swipe-hint{display:flex;align-items:center;justify-content:center;gap:8px;color:#90a0ab;font-family:var(--ff-card);font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase;opacity:1;margin:0 0 10px}
+  .swipe-hint svg{width:34px;height:12px}
   /* SECTION 1 mobile: image différente + layout empilé */
   #s1{grid-template-columns:1fr}
   .s1-img{order:-1;background-image:url('images/section1mobile.jpeg');min-height:48vh}
@@ -416,6 +434,7 @@ nav a:hover{opacity:1}
         <h2>NOTRE CARTE</h2>
         <a class="btn call" href="tel:+33562517017"><img class="star" src="images/star-white.webp" alt=""> Commander</a>
       </div>
+      <div class="carte-panel">
       <div class="tabs">
         <button class="tab active" data-cat="basiques" role="tab" aria-selected="true">BASIQUES</button>
         <button class="tab" data-cat="classiques" role="tab" aria-selected="false">CLASSIQUES</button>
@@ -423,8 +442,13 @@ nav a:hover{opacity:1}
         <button class="tab" data-cat="speciales" role="tab" aria-selected="false">SPÉCIALES</button>
         <button class="tab" data-cat="autres" role="tab" aria-selected="false">BOISSONS & KIDS</button>
       </div>
+      <div class="swipe-hint" aria-hidden="true">
+        <svg viewBox="0 0 34 12" fill="none"><path d="M9 2 L3 6 L9 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M25 2 L31 6 L25 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 6 H29" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/></svg>
+        Glissez pour changer de catégorie
+      </div>
       <div class="carte-viewport">
         <div class="pizza-grid" id="pizza-grid"></div>
+      </div>
       </div>
     </div>
   </section>
@@ -535,54 +559,56 @@ nav a:hover{opacity:1}
 /* ===== Carte (onglets) + FAQ ===== */
 (()=>{
 
+  /* Chaque pizza : p29 = petit format (⌀29), p33 = grand format (⌀33).
+     Les boissons/kids n'ont qu'un seul prix (champ "price"). */
   const pizzas = {
     basiques: [
-      {name:'La Fromage',    price:'7,70 €',  desc:'Sauce tomate (tomates 100% italiennes), olives, mozzarella, emmental fondu. Pizza de 33cm et 6,60€ pour une pizza de 29cm.'},
-      {name:'La Provençale', price:'8,90 €',  desc:'Sauce tomate (tomates 100% italiennes), olives, tomates cerises, persillade, herbes de Provence, mozzarella. Pizza de 33cm et 7,50€ pour une pizza de 29cm.'},
-      {name:'La Jambon',     price:'9,90 €',  desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), mozzarella. Pizza de 33cm et 8,60€ pour une pizza de 29cm.'},
-      {name:'La Reine',      price:'11,50 €', desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), champignons, mozzarella. Pizza de 33cm et 9,50€ pour une pizza de 29cm.'}
+      {name:'La Fromage',    p29:'6,60 €', p33:'7,70 €',  desc:'Sauce tomate (tomates 100% italiennes), olives, mozzarella, emmental fondu.'},
+      {name:'La Provençale', p29:'7,50 €', p33:'8,90 €',  desc:'Sauce tomate (tomates 100% italiennes), olives, tomates cerises, persillade, herbes de Provence, mozzarella.'},
+      {name:'La Jambon',     p29:'8,60 €', p33:'9,90 €',  desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), mozzarella.'},
+      {name:'La Reine',      p29:'9,50 €', p33:'11,50 €', desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), champignons, mozzarella.'}
     ],
     classiques: [
-      {name:'La Campagnarde', price:'11,80 €', desc:'Sauce tomate (tomates 100% italiennes), olives, lardons, persillade, crème fraîche, mozzarella. Pizza de 33cm et 9,60€ pour une pizza de 29cm.'},
-      {name:'La Chèvre', price:'11,20 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chèvre, mozzarella. Pizza de 33cm et 9,70€ pour une pizza de 29cm.'},
-      {name:'La Chorizo', price:'11,50 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chorizo, oignons, poivrons, mozzarella. Pizza de 33cm et 9,50€ pour une pizza de 29cm.'},
-      {name:"La Cal'Z", price:'11,80 €', desc:'Sauce tomate (tomates 100% italiennes), jambon supérieur (100% porc français), crème fraîche, œuf, mozzarella. Pizza de 33cm et 9,90€ pour une pizza de 29cm.'},
-      {name:'La Tropicale', price:'11,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), ananas, crème fraîche, mozzarella. Pizza de 33cm et 9,90€ pour une pizza de 29cm.'},
-      {name:"La Beni Veggie", price:'11,50 €', desc:"Sauce tomate (tomates 100% italiennes), olives, poivrons, champignons, cœur d'artichauts, tomates, mozzarella. Pizza de 33cm et 9,20€ pour une pizza de 29cm."},
-      {name:"L'Orientale", price:'11,90 €', desc:"Sauce tomate (tomates 100% italiennes), olives, merguez, oignons, poivrons, mozzarella. Pizza de 33cm et 9,90€ pour une pizza de 29cm."},
-      {name:'La Fermière', price:'11,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), œuf, crème fraîche, mozzarella. Pizza de 33cm et 9,90€ pour une pizza de 29cm.'}
+      {name:'La Campagnarde', p29:'9,60 €', p33:'11,80 €', desc:'Sauce tomate (tomates 100% italiennes), olives, lardons, persillade, crème fraîche, mozzarella.'},
+      {name:'La Chèvre', p29:'9,70 €', p33:'11,20 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chèvre, mozzarella.'},
+      {name:'La Chorizo', p29:'9,50 €', p33:'11,50 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chorizo, oignons, poivrons, mozzarella.'},
+      {name:"La Cal'Z", p29:'9,90 €', p33:'11,80 €', desc:'Sauce tomate (tomates 100% italiennes), jambon supérieur (100% porc français), crème fraîche, œuf, mozzarella.'},
+      {name:'La Tropicale', p29:'9,90 €', p33:'11,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), ananas, crème fraîche, mozzarella.'},
+      {name:"La Beni Veggie", p29:'9,20 €', p33:'11,50 €', desc:"Sauce tomate (tomates 100% italiennes), olives, poivrons, champignons, cœur d'artichauts, tomates, mozzarella."},
+      {name:"L'Orientale", p29:'9,90 €', p33:'11,90 €', desc:"Sauce tomate (tomates 100% italiennes), olives, merguez, oignons, poivrons, mozzarella."},
+      {name:'La Fermière', p29:'9,90 €', p33:'11,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), œuf, crème fraîche, mozzarella.'}
     ],
     gourmandes: [
-      {name:'La 4 Fromages', price:'12,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, roquefort, parmesan, emmental fondu, mozzarella. Pizza de 33cm et 10,80€ pour une pizza de 29cm.'},
-      {name:'La Royale', price:'13,60 €', desc:"Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), poivrons, champignons, cœur d'artichauts, œuf, mozzarella. Pizza de 33cm et 11,60€ pour une pizza de 29cm."},
-      {name:'La Savoyarde', price:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, pommes de terre, lardons, reblochon, crème, mozzarella. Pizza de 33cm et 12,90€ pour une pizza de 29cm.'},
-      {name:'La Nordique', price:'14,60 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, saumon fumé, mozzarella. Pizza de 33cm et 12,60€ pour une pizza de 29cm.'},
-      {name:'La Bigourdane', price:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), œuf, chorizo, merguez, mozzarella. Pizza de 33cm et 11,90€ pour une pizza de 29cm.'},
-      {name:'La Délicieuse', price:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chorizo, poivrons, champignons, lardons, crème fraîche, persillade, mozzarella. Pizza de 33cm et 11,90€ pour une pizza de 29cm.'},
-      {name:'La Kebab', price:'14,10 €', desc:'Sauce tomate (tomates 100% italiennes), olives, oignons, lamelles de kebab, sauce kebab, mozzarella. Pizza de 33cm et 11,90€ pour une pizza de 29cm.'},
-      {name:'La Texane', price:'14,70 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chorizo, oignons, viande hachée de boeuf, œuf, persillade, mozzarella. Pizza de 33cm et 11,70€ pour une pizza de 29cm.'},
-      {name:'La Samouraï', price:'14,90 €', desc:"Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), chorizo, lardons, merguez, sauce samouraï épices à pizza, mozzarella. Pizza de 33cm et 12,60€ pour une pizza de 29cm."},
-      {name:'La Burger', price:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, viande hachée, cheddar, cornichons, sauce burger, mozzarella. Pizza de 33cm et 11,90€ pour une pizza de 29cm.'},
-      {name:'La Fifty', price:'15,50 €', desc:'Panaché de 2 recettes sur la même pizza. Pizza de 33cm et 13,50€ pour une pizza de 29cm.'},
-      {name:'La Raclette', price:'13,90 €', desc:'Crème fraîche légère française, mozzarella, bacon, pommes de terre française, oignons, raclette française. Pizza de 33cm et 11,50€ pour une pizza de 29cm.'}
+      {name:'La 4 Fromages', p29:'10,80 €', p33:'12,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, roquefort, parmesan, emmental fondu, mozzarella.'},
+      {name:'La Royale', p29:'11,60 €', p33:'13,60 €', desc:"Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), poivrons, champignons, cœur d'artichauts, œuf, mozzarella."},
+      {name:'La Savoyarde', p29:'12,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, pommes de terre, lardons, reblochon, crème, mozzarella.'},
+      {name:'La Nordique', p29:'12,60 €', p33:'14,60 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, saumon fumé, mozzarella.'},
+      {name:'La Bigourdane', p29:'11,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), œuf, chorizo, merguez, mozzarella.'},
+      {name:'La Délicieuse', p29:'11,90 €', p33:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chorizo, poivrons, champignons, lardons, crème fraîche, persillade, mozzarella.'},
+      {name:'La Kebab', p29:'11,90 €', p33:'14,10 €', desc:'Sauce tomate (tomates 100% italiennes), olives, oignons, lamelles de kebab, sauce kebab, mozzarella.'},
+      {name:'La Texane', p29:'11,70 €', p33:'14,70 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chorizo, oignons, viande hachée de boeuf, œuf, persillade, mozzarella.'},
+      {name:'La Samouraï', p29:'12,60 €', p33:'14,90 €', desc:"Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), chorizo, lardons, merguez, sauce samouraï épices à pizza, mozzarella."},
+      {name:'La Burger', p29:'11,90 €', p33:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, viande hachée, cheddar, cornichons, sauce burger, mozzarella.'},
+      {name:'La Fifty', p29:'13,50 €', p33:'15,50 €', desc:'Panaché de 2 recettes sur la même pizza.'},
+      {name:'La Raclette', p29:'11,50 €', p33:'13,90 €', desc:'Crème fraîche légère française, mozzarella, bacon, pommes de terre française, oignons, raclette française.'}
     ],
     speciales: [
-      {name:'La Gersoise', price:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, lardons, magret de canard, miel, chêvre, mozzarella. Pizza de 33cm et 12,90€ pour une pizza de 29cm.'},
-      {name:'La Magret', price:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, lardons, magret de canard, persillade, mozzarella. Pizza de 33cm et 12,90€ pour une pizza de 29cm.'},
-      {name:'La Miel', price:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chèvre, crème fraîche, miel, poulet, barbecue, mozzarella. Pizza de 33cm et 11,90€ pour une pizza de 29cm.'},
-      {name:'La Napolitaine', price:'12,90 €', desc:"Sauce tomate (tomates 100% italiennes), olives, câpres, filets d'anchois, origan, mozzarella. Pizza de 33cm et 11,50€ pour une pizza de 29cm."},
-      {name:'La Poulet', price:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, ananas, crème fraîche, poulet, sauce curry, mozzarella. Pizza de 33cm et 11,90€ pour une pizza de 29cm.'},
-      {name:'La Rustique', price:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, pommes de terre, roquefort, jambon supérieur (100% porc français), mozzarella. Pizza de 33cm et 12,90€ pour une pizza de 29cm.'},
-      {name:'La Reblochon', price:'13,90 €', desc:'Crème fraîche, olives, champignons, lardons, oignons rouges, origan, reblochon, mozzarella. Pizza de 33cm et 11,90€ pour une pizza de 29cm.'},
-      {name:'La 6 Fromages', price:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chèvre, emmental, mozzarella, parmesan, reblochon, roquefort. Pizza de 33cm et 13,90€ pour une pizza de 29cm.'},
-      {name:'La Thon', price:'13,60 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, oignons, thon, mozzarella. Pizza de 33cm et 12€ pour une pizza de 29cm.'},
-      {name:'La Bolo', price:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, oignons, viande hachée de boeuf, mozzarella. Pizza de 33cm et 11,90€ pour une pizza de 29cm.'},
-      {name:'La Roquefort', price:'14,50 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, roquefort, viande hachée de boeuf, mozzarella. Pizza de 33cm et 12,50€ pour une pizza de 29cm.'},
-      {name:'La Kebab Suprême', price:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, lamelles de kebab, merguez, sauce kebab, viande hachée de boeuf, mozzarella. Pizza de 33cm et 12,20€ pour une pizza de 29cm.'},
-      {name:'La Lorraine', price:'13,00 €', desc:'Crème fraîche, olives, lardons, oignons, mozzarella. Pizza de 33cm et 11€ pour une pizza de 29cm.'},
-      {name:'La Parme', price:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, boule de mozzarella 50gr, jambon de parme, parmesan, tomates cerises, crème balsamique, roquette, mozzarella. Pizza de 33cm et 12,90€ pour une pizza de 29cm.'},
-      {name:'La Chèvre Miel', price:'14,90 €', desc:'Crème fraîche légère, chèvre, miel, mozzarella. Pizza de 33cm et 12,90€ pour une pizza de 29cm.'},
-      {name:'La So Curry', price:'14,90 €', desc:'Crème fraîche, poulet, sauce curry, poivrons, oignons, olives, miel, mozzarella. Pizza de 33cm et 12,90€ pour une pizza de 29cm.'}
+      {name:'La Gersoise', p29:'12,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, lardons, magret de canard, miel, chêvre, mozzarella.'},
+      {name:'La Magret', p29:'12,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, lardons, magret de canard, persillade, mozzarella.'},
+      {name:'La Miel', p29:'11,90 €', p33:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chèvre, crème fraîche, miel, poulet, barbecue, mozzarella.'},
+      {name:'La Napolitaine', p29:'11,50 €', p33:'12,90 €', desc:"Sauce tomate (tomates 100% italiennes), olives, câpres, filets d'anchois, origan, mozzarella."},
+      {name:'La Poulet', p29:'11,90 €', p33:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, ananas, crème fraîche, poulet, sauce curry, mozzarella.'},
+      {name:'La Rustique', p29:'12,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, pommes de terre, roquefort, jambon supérieur (100% porc français), mozzarella.'},
+      {name:'La Reblochon', p29:'11,90 €', p33:'13,90 €', desc:'Crème fraîche, olives, champignons, lardons, oignons rouges, origan, reblochon, mozzarella.'},
+      {name:'La 6 Fromages', p29:'13,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chèvre, emmental, mozzarella, parmesan, reblochon, roquefort.'},
+      {name:'La Thon', p29:'12 €', p33:'13,60 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, oignons, thon, mozzarella.'},
+      {name:'La Bolo', p29:'11,90 €', p33:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, oignons, viande hachée de boeuf, mozzarella.'},
+      {name:'La Roquefort', p29:'12,50 €', p33:'14,50 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, roquefort, viande hachée de boeuf, mozzarella.'},
+      {name:'La Kebab Suprême', p29:'12,20 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, lamelles de kebab, merguez, sauce kebab, viande hachée de boeuf, mozzarella.'},
+      {name:'La Lorraine', p29:'11 €', p33:'13,00 €', desc:'Crème fraîche, olives, lardons, oignons, mozzarella.'},
+      {name:'La Parme', p29:'12,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, boule de mozzarella 50gr, jambon de parme, parmesan, tomates cerises, crème balsamique, roquette, mozzarella.'},
+      {name:'La Chèvre Miel', p29:'12,90 €', p33:'14,90 €', desc:'Crème fraîche légère, chèvre, miel, mozzarella.'},
+      {name:'La So Curry', p29:'12,90 €', p33:'14,90 €', desc:'Crème fraîche, poulet, sauce curry, poivrons, oignons, olives, miel, mozzarella.'}
     ],
     autres: [
       {name:'Menu Bambino', price:'7,00 €', desc:'Pizza Fromage ou Jambon ou Reine + 1 boisson + 1 Kinder.'},
@@ -602,37 +628,78 @@ nav a:hover{opacity:1}
       {name:'Orangina (1,5L)', price:'3 €', desc:''}
     ] };
 
+  const cats = ['basiques','classiques','gourmandes','speciales','autres'];
+  let current = 'basiques';
+
   const grid = document.getElementById('pizza-grid');
+  const priceBlock = p => {
+    // deux formats (⌀29 / ⌀33) si dispo, sinon prix unique
+    if (p.p29 && p.p33){
+      return `<span class="prices">`
+        + `<span class="psz"><span class="dia">⌀29</span><span class="price">${p.p29}</span></span>`
+        + `<span class="psz"><span class="dia">⌀33</span><span class="price">${p.p33}</span></span>`
+        + `</span>`;
+    }
+    return `<span class="prices"><span class="price">${p.price || ''}</span></span>`;
+  };
   const render = cat => {
     grid.innerHTML = '';
     (pizzas[cat] || []).forEach(p => {
       const card = document.createElement('div');
       card.className = 'pizza';
       card.innerHTML = `
-        <h3>${p.name}<span class="price">${p.price}</span></h3>
-        <p>${p.desc}</p>
+        <h3><span class="pizza-name">${p.name}</span>${priceBlock(p)}</h3>
+        ${p.desc ? `<p>${p.desc}</p>` : ''}
         <div class="hr"></div>`;
       grid.appendChild(card);
     });
   };
-  render('basiques');
+
+  const tabsEl = document.querySelector('.tabs');
+  const selectCat = cat => {
+    if (!pizzas[cat]) return;
+    current = cat;
+    document.querySelectorAll('.tab').forEach(b => {
+      const on = b.dataset.cat === cat;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+      if (on && tabsEl && tabsEl.scrollWidth > tabsEl.clientWidth){
+        b.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+      }
+    });
+    render(cat);
+  };
+  selectCat('basiques');
 
   document.addEventListener('click', e => {
     const btn = e.target.closest('.tab');
-    if (!btn) return;
-    document.querySelectorAll('.tab').forEach(b => {
-      b.classList.remove('active');
-      b.setAttribute('aria-selected','false');
-    });
-    btn.classList.add('active');
-    btn.setAttribute('aria-selected','true');
-    render(btn.dataset.cat);
+    if (btn) selectCat(btn.dataset.cat);
   });
   document.querySelectorAll('.tab').forEach(tb => {
     tb.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tb.click(); }
     });
   });
+
+  /* Swipe horizontal sur la zone carte pour changer de catégorie (mobile) */
+  const viewport = document.querySelector('.carte-viewport');
+  if (viewport){
+    let sx = 0, sy = 0, tracking = false;
+    viewport.addEventListener('touchstart', e => {
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY; tracking = true;
+    }, {passive:true});
+    viewport.addEventListener('touchend', e => {
+      if (!tracking) return;
+      tracking = false;
+      const dx = e.changedTouches[0].clientX - sx;
+      const dy = e.changedTouches[0].clientY - sy;
+      if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.6){
+        let i = cats.indexOf(current);
+        i = dx < 0 ? Math.min(i + 1, cats.length - 1) : Math.max(i - 1, 0);
+        selectCat(cats[i]);
+      }
+    }, {passive:true});
+  }
 
   const faqArea  = document.querySelector('.faq-area');
   const faqPanel = document.getElementById('faq-panel');
