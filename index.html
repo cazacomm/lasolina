@@ -675,10 +675,35 @@ nav a:hover{opacity:1}
   ];
 
   const routeBtn = document.getElementById('routeBtn');
+  const points = [];          // {lat, lon, name} une fois géocodés
+  let userPos = null;         // position du visiteur si autorisée
+  let userPinned = false;     // true si le visiteur a cliqué un point précis
 
   function geocode(q){
     const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=fr&q=${encodeURIComponent(q)}`;
     return fetch(url, {headers:{'Accept':'application/json'}}).then(r=>r.json());
+  }
+
+  // Distance approximative (Haversine, en km)
+  const toRad = d => d * Math.PI / 180;
+  function distKm(a, b){
+    const R = 6371, dLat = toRad(b.lat - a.lat), dLon = toRad(b.lon - a.lon);
+    const x = Math.sin(dLat/2)**2 + Math.cos(toRad(a.lat))*Math.cos(toRad(b.lat))*Math.sin(dLon/2)**2;
+    return 2 * R * Math.asin(Math.sqrt(x));
+  }
+  function setRoute(p){
+    routeBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}&travelmode=driving`;
+    routeBtn.removeAttribute('disabled');
+  }
+  // Choisit le distributeur le plus proche du visiteur (sauf s'il a cliqué un point)
+  function applyNearest(){
+    if (userPinned || !userPos || !points.length) return;
+    let best = points[0], bd = distKm(userPos, best);
+    for (const p of points){
+      const d = distKm(userPos, p);
+      if (d < bd){ bd = d; best = p; }
+    }
+    setRoute(best);
   }
 
   Promise.all(addresses.map(a=>geocode(a.address))).then(results => {
@@ -687,11 +712,12 @@ nav a:hover{opacity:1}
       if(!res || !res[0]) return;
       const lat = parseFloat(res[0].lat), lon = parseFloat(res[0].lon);
       const a = addresses[i];
+      points.push({lat, lon, name:a.name});
       const m = L.marker([lat, lon]).addTo(map);
       m.bindPopup(`<strong>${a.name}</strong><br>${a.address}<br><small>Cliquez pour définir l'itinéraire</small>`);
       m.on('click', () => {
-        routeBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=driving`;
-        routeBtn.removeAttribute('disabled');
+        userPinned = true;   // l'utilisateur a choisi un point précis : on respecte son choix
+        setRoute({lat, lon});
       });
       bounds.extend([lat, lon]);
     });
@@ -699,14 +725,20 @@ nav a:hover{opacity:1}
       map.setView([43.232, 0.073], 12);
     } else {
       map.fitBounds(bounds.pad(0.2));
-      const first = results.find(r => r && r[0]);
-      if(first){
-        const lat = parseFloat(first[0].lat), lon = parseFloat(first[0].lon);
-        routeBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=driving`;
-        routeBtn.removeAttribute('disabled');
-      }
+      // Itinéraire par défaut = Tarbes (1er point), remplacé par le plus proche si géoloc OK
+      if (points.length) setRoute(points[0]);
+      applyNearest();
     }
   }).catch(()=>{ map.setView([43.232, 0.073], 12); });
+
+  // Géolocalisation : si autorisée, on cible le distributeur le plus proche.
+  if (navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      pos => { userPos = {lat:pos.coords.latitude, lon:pos.coords.longitude}; applyNearest(); },
+      ()  => {},   // refus/échec : on garde Tarbes par défaut
+      { enableHighAccuracy:false, timeout:8000, maximumAge:600000 }
+    );
+  }
 
   routeBtn.addEventListener('click', e => { if(routeBtn.hasAttribute('disabled')) e.preventDefault(); });
 })();
@@ -719,14 +751,23 @@ nav a:hover{opacity:1}
   const header = document.querySelector('.site-header');
   const easeInOutCubic = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
 
+  // Sur ce site, l'élément qui défile peut être <body> (à cause de height:100%
+  // + overflow-x:hidden). On lit/écrit donc les deux pour être robuste.
+  const getScrollTop = () =>
+    window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+  const setScrollTop = y => {
+    document.documentElement.scrollTop = y;
+    document.body.scrollTop = y;
+  };
+
   const targetTop = el => {
     const offset = (header ? header.offsetHeight : 72) + 12;
-    return Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - offset);
+    return Math.max(0, el.getBoundingClientRect().top + getScrollTop() - offset);
   };
 
   const animateTo = (el, duration=820) => {
-    if (reduce){ window.scrollTo(0, targetTop(el)); return; }
-    const start = window.pageYOffset;
+    if (reduce){ setScrollTop(targetTop(el)); return; }
+    const start = getScrollTop();
     const end = targetTop(el);
     const dist = end - start;
     if (Math.abs(dist) < 2) return;
@@ -734,7 +775,7 @@ nav a:hover{opacity:1}
     const step = now => {
       if (startTime === null) startTime = now;
       const p = Math.min(1, (now - startTime) / duration);
-      window.scrollTo(0, start + dist * easeInOutCubic(p));
+      setScrollTop(start + dist * easeInOutCubic(p));
       if (p < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
@@ -761,7 +802,7 @@ nav a:hover{opacity:1}
   if (location.hash.length > 1){
     const el = document.getElementById(location.hash.slice(1));
     if (el){
-      window.scrollTo(0, 0);
+      setScrollTop(0);
       setTimeout(()=>animateTo(el, 1000), 120);
     }
   }
