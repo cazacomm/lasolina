@@ -86,6 +86,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700;900&family=Open+Sans:wght@400;700&family=Space+Grotesk:wght@500;700&family=League+Spartan:wght@600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
+  <!-- Leaflet (carte des distributeurs) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
   <!-- ═══════════════════════════════════════════════════════════
        DONNÉES STRUCTURÉES  (Schema.org – JSON-LD)
        PizzaRestaurant + Menu + zone de livraison
@@ -200,7 +204,7 @@ html,body{height:100%}
 body{margin:0;background:#f3f6f8;color:var(--c-text);font-family:var(--ff-body);line-height:1.4}
 img{max-width:100%;display:block}
 html,body{overflow-x:hidden}
-html{scroll-behavior:smooth} /* << Smooth natif et fiable */
+html{scroll-behavior:auto} /* défilement géré en JS (animation ralentie) */
 .container{max-width:var(--container);margin:0 auto;padding:0 24px}
 section{position:relative;scroll-margin-top:84px} /* offset pour le header */
 
@@ -235,6 +239,7 @@ nav a:hover{opacity:1}
 #hero{position:relative; /* pour le sentinel */ min-height:92vh;display:grid;grid-template-columns:1fr 1fr}
 .hero-left{background:var(--c-hero);padding:120px 8vw 80px;display:flex;flex-direction:column;justify-content:center}
 .hero-title{font-family:var(--ff-title);font-weight:900;letter-spacing:.02em;line-height:1.2;margin:0 0 24px 0;font-size:var(--h1);color:#000}
+.hero-lead{font-family:var(--ff-body);font-size:clamp(16px,1.8vw,20px);line-height:1.5;color:#0b1c27;max-width:46ch;margin:0}
 .hero-cta{display:flex;align-items:center;gap:16px;margin-top:24px}
 .btn{display:inline-flex;align-items:center;gap:10px;background:var(--c-accent);color:var(--c-white);border:2px solid #000;border-radius:999px;padding:14px 22px;font-weight:800;text-decoration:none;box-shadow:0 6px 0 rgba(0,0,0,.25);transition:transform .1s ease,box-shadow .1s ease;font-family:var(--ff-btn);width:auto;max-width:max-content}
 .btn:hover{transform:translateY(-1px);box-shadow:0 8px 0 rgba(0,0,0,.25)}
@@ -285,6 +290,17 @@ nav a:hover{opacity:1}
 .pizza .price{color:var(--c-red);font-weight:700;font-family:var(--ff-card);font-size:1em}
 .pizza p{margin:6px 0 0 0;color:#55636d;opacity:1;font-family:var(--ff-card);font-size:14px;line-height:1.5}
 .hr{height:1px;background:#e7edf1;margin:12px 0;opacity:1}
+
+/* Section Distributeurs — map remontée sur l'accueil */
+#distributeurs{background:var(--c-deep);color:var(--c-white);padding:90px 0}
+.distrib-head{margin-bottom:20px}
+.distrib-head h2{font-family:var(--ff-title);font-size:var(--h2);margin:0;color:#e3f3ff}
+.distrib-head .lead{opacity:.9;margin-top:8px;font-family:var(--ff-body)}
+#map{height:62vh;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.map-legend{margin-top:14px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.badge{background:#0e2e42;color:#fff;padding:10px 14px;border-radius:999px;font-weight:700;display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-card);font-size:14px;border:1px solid rgba(227,243,255,.18)}
+.route-bar{display:grid;place-items:center;margin:28px 0 4px}
+.route-bar .btn[disabled]{opacity:.6;pointer-events:none}
 
 /* Section 4 — FAQ */
 #faq{background:var(--c-deep) url('images/faq-bg.jpeg') center/cover fixed;color:#fff;padding:80px 0}
@@ -381,11 +397,11 @@ nav a:hover{opacity:1}
     </a>
     <nav id="site-nav">
       <a href="#hero">Accueil</a>
+      <a href="#distributeurs">Nos Distributeurs</a>
       <a href="#s1">Les pizzas</a>
       <a href="#carte">Carte</a>
       <a href="#faq">Questions</a>
       <a href="#contact">Contact</a>
-      <a href="carte.html">Nos Distributeurs</a>
     </nav>
     <button class="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
@@ -398,12 +414,35 @@ nav a:hover{opacity:1}
     <div id="hero-threshold" aria-hidden="true" style="position:absolute;left:0;right:0;top:50%;height:1px;"></div>
 
     <div class="hero-left">
-      <h1 class="hero-title">FRAÎCHE, ARTISANALE, PRÉPARÉE POUR VOUS</h1>
+      <h1 class="hero-title">FRAÎCHES, ARTISANALES, EN DISTRIBUTEUR</h1>
+      <p class="hero-lead">Faites le matin avec des produits frais, nos pizzas artisanales vous attendent dans nos distributeurs près de chez vous.</p>
       <div class="hero-cta">
-        <a class="btn" href="carte.html"><img class="star" src="images/star-white.webp" alt=""> Nos Distributeurs</a>
+        <a class="btn" href="#distributeurs"><img class="star" src="images/star-white.webp" alt=""> Voir nos distributeurs</a>
       </div>
     </div>
     <div class="hero-right" aria-hidden="true"></div>
+  </section>
+
+  <!-- SECTION DISTRIBUTEURS (map remontée sur l'accueil) -->
+  <section id="distributeurs">
+    <div class="container">
+      <div class="distrib-head">
+        <h2>NOS DISTRIBUTEURS</h2>
+        <p class="lead">Retrouvez nos points de vente sur la carte. Cliquez sur un point pour l'itinéraire.</p>
+      </div>
+      <div id="map" role="region" aria-label="Carte des distributeurs"></div>
+      <div class="map-legend">
+        <span class="badge">• Tarbes : 15bis Bd du Général de Lattre de Tassigny, 65000</span>
+        <span class="badge">• Séméac : 111 Av. des Sports, 65600</span>
+        <span class="badge">• Orleix : 11 Route de Rabastens, 65800</span>
+        <span class="badge">• Horgues : 21 Rue du Pic du Midi, 65310</span>
+        <span class="badge">• Adé : 3 Av. des Pyrénées, 65100</span>
+        <span class="badge">• Lourdes : 4 Rue Lucien Pourxet, 65100</span>
+      </div>
+      <div class="route-bar">
+        <a id="routeBtn" class="btn" href="#" target="_blank" rel="noopener" disabled><img class="star" src="images/star-white.webp" alt=""> Itinéraire ➜</a>
+      </div>
+    </div>
   </section>
 
   <!-- SECTION 1 -->
@@ -421,7 +460,7 @@ nav a:hover{opacity:1}
       <h2 class="s2-title">POUR CEUX QUI AIMENT LE VRAI GOÛT DU <span class="frais">FRAIS</span></h2>
       <div class="s2-cta" style="display:flex;align-items:center;gap:18px">
         <svg class="s2-arrow" viewBox="0 0 64 24" aria-hidden="true" style="animation:wiggle 3s ease-in-out infinite"><path d="M2 12 H58" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M46 3 L62 12 L46 21" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <a class="btn btn-outline" href="carte.html"><img class="star" src="images/star-white.webp" alt=""> Nos Distributeurs</a>
+        <a class="btn btn-outline" href="#distributeurs"><img class="star" src="images/star-white.webp" alt=""> Nos Distributeurs</a>
       </div>
     </div>
     <div class="s2-photo" aria-hidden="true"></div>
@@ -435,17 +474,6 @@ nav a:hover{opacity:1}
         <a class="btn call" href="tel:+33562517017"><img class="star" src="images/star-white.webp" alt=""> Commander</a>
       </div>
       <div class="carte-panel">
-      <div class="tabs">
-        <button class="tab active" data-cat="basiques" role="tab" aria-selected="true">BASIQUES</button>
-        <button class="tab" data-cat="classiques" role="tab" aria-selected="false">CLASSIQUES</button>
-        <button class="tab" data-cat="gourmandes" role="tab" aria-selected="false">GOURMANDES</button>
-        <button class="tab" data-cat="speciales" role="tab" aria-selected="false">SPÉCIALES</button>
-        <button class="tab" data-cat="autres" role="tab" aria-selected="false">BOISSONS & KIDS</button>
-      </div>
-      <div class="swipe-hint" aria-hidden="true">
-        <svg viewBox="0 0 34 12" fill="none"><path d="M9 2 L3 6 L9 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M25 2 L31 6 L25 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 6 H29" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/></svg>
-        Glissez pour changer de catégorie
-      </div>
       <div class="carte-viewport">
         <div class="pizza-grid" id="pizza-grid"></div>
       </div>
@@ -559,156 +587,50 @@ nav a:hover{opacity:1}
 /* ===== Carte (onglets) + FAQ ===== */
 (()=>{
 
-  /* Chaque pizza : p29 = petit format (⌀29), p33 = grand format (⌀33).
-     Les boissons/kids n'ont qu'un seul prix (champ "price"). */
-  const pizzas = {
-    basiques: [
-      {name:'La Fromage',    p29:'6,60 €', p33:'7,70 €',  desc:'Sauce tomate (tomates 100% italiennes), olives, mozzarella, emmental fondu.'},
-      {name:'La Provençale', p29:'7,50 €', p33:'8,90 €',  desc:'Sauce tomate (tomates 100% italiennes), olives, tomates cerises, persillade, herbes de Provence, mozzarella.'},
-      {name:'La Jambon',     p29:'8,60 €', p33:'9,90 €',  desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), mozzarella.'},
-      {name:'La Reine',      p29:'9,50 €', p33:'11,50 €', desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), champignons, mozzarella.'}
-    ],
-    classiques: [
-      {name:'La Campagnarde', p29:'9,60 €', p33:'11,80 €', desc:'Sauce tomate (tomates 100% italiennes), olives, lardons, persillade, crème fraîche, mozzarella.'},
-      {name:'La Chèvre', p29:'9,70 €', p33:'11,20 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chèvre, mozzarella.'},
-      {name:'La Chorizo', p29:'9,50 €', p33:'11,50 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chorizo, oignons, poivrons, mozzarella.'},
-      {name:"La Cal'Z", p29:'9,90 €', p33:'11,80 €', desc:'Sauce tomate (tomates 100% italiennes), jambon supérieur (100% porc français), crème fraîche, œuf, mozzarella.'},
-      {name:'La Tropicale', p29:'9,90 €', p33:'11,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), ananas, crème fraîche, mozzarella.'},
-      {name:"La Beni Veggie", p29:'9,20 €', p33:'11,50 €', desc:"Sauce tomate (tomates 100% italiennes), olives, poivrons, champignons, cœur d'artichauts, tomates, mozzarella."},
-      {name:"L'Orientale", p29:'9,90 €', p33:'11,90 €', desc:"Sauce tomate (tomates 100% italiennes), olives, merguez, oignons, poivrons, mozzarella."},
-      {name:'La Fermière', p29:'9,90 €', p33:'11,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), œuf, crème fraîche, mozzarella.'}
-    ],
-    gourmandes: [
-      {name:'La 4 Fromages', p29:'10,80 €', p33:'12,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, roquefort, parmesan, emmental fondu, mozzarella.'},
-      {name:'La Royale', p29:'11,60 €', p33:'13,60 €', desc:"Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), poivrons, champignons, cœur d'artichauts, œuf, mozzarella."},
-      {name:'La Savoyarde', p29:'12,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, pommes de terre, lardons, reblochon, crème, mozzarella.'},
-      {name:'La Nordique', p29:'12,60 €', p33:'14,60 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, saumon fumé, mozzarella.'},
-      {name:'La Bigourdane', p29:'11,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), œuf, chorizo, merguez, mozzarella.'},
-      {name:'La Délicieuse', p29:'11,90 €', p33:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chorizo, poivrons, champignons, lardons, crème fraîche, persillade, mozzarella.'},
-      {name:'La Kebab', p29:'11,90 €', p33:'14,10 €', desc:'Sauce tomate (tomates 100% italiennes), olives, oignons, lamelles de kebab, sauce kebab, mozzarella.'},
-      {name:'La Texane', p29:'11,70 €', p33:'14,70 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chorizo, oignons, viande hachée de boeuf, œuf, persillade, mozzarella.'},
-      {name:'La Samouraï', p29:'12,60 €', p33:'14,90 €', desc:"Sauce tomate (tomates 100% italiennes), olives, jambon supérieur (100% porc français), chorizo, lardons, merguez, sauce samouraï épices à pizza, mozzarella."},
-      {name:'La Burger', p29:'11,90 €', p33:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, viande hachée, cheddar, cornichons, sauce burger, mozzarella.'},
-      {name:'La Fifty', p29:'13,50 €', p33:'15,50 €', desc:'Panaché de 2 recettes sur la même pizza.'},
-      {name:'La Raclette', p29:'11,50 €', p33:'13,90 €', desc:'Crème fraîche légère française, mozzarella, bacon, pommes de terre française, oignons, raclette française.'}
-    ],
-    speciales: [
-      {name:'La Gersoise', p29:'12,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, lardons, magret de canard, miel, chêvre, mozzarella.'},
-      {name:'La Magret', p29:'12,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, lardons, magret de canard, persillade, mozzarella.'},
-      {name:'La Miel', p29:'11,90 €', p33:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chèvre, crème fraîche, miel, poulet, barbecue, mozzarella.'},
-      {name:'La Napolitaine', p29:'11,50 €', p33:'12,90 €', desc:"Sauce tomate (tomates 100% italiennes), olives, câpres, filets d'anchois, origan, mozzarella."},
-      {name:'La Poulet', p29:'11,90 €', p33:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, ananas, crème fraîche, poulet, sauce curry, mozzarella.'},
-      {name:'La Rustique', p29:'12,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, pommes de terre, roquefort, jambon supérieur (100% porc français), mozzarella.'},
-      {name:'La Reblochon', p29:'11,90 €', p33:'13,90 €', desc:'Crème fraîche, olives, champignons, lardons, oignons rouges, origan, reblochon, mozzarella.'},
-      {name:'La 6 Fromages', p29:'13,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, chèvre, emmental, mozzarella, parmesan, reblochon, roquefort.'},
-      {name:'La Thon', p29:'12 €', p33:'13,60 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, oignons, thon, mozzarella.'},
-      {name:'La Bolo', p29:'11,90 €', p33:'13,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, oignons, viande hachée de boeuf, mozzarella.'},
-      {name:'La Roquefort', p29:'12,50 €', p33:'14,50 €', desc:'Sauce tomate (tomates 100% italiennes), olives, crème fraîche, roquefort, viande hachée de boeuf, mozzarella.'},
-      {name:'La Kebab Suprême', p29:'12,20 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, lamelles de kebab, merguez, sauce kebab, viande hachée de boeuf, mozzarella.'},
-      {name:'La Lorraine', p29:'11 €', p33:'13,00 €', desc:'Crème fraîche, olives, lardons, oignons, mozzarella.'},
-      {name:'La Parme', p29:'12,90 €', p33:'14,90 €', desc:'Sauce tomate (tomates 100% italiennes), olives, boule de mozzarella 50gr, jambon de parme, parmesan, tomates cerises, crème balsamique, roquette, mozzarella.'},
-      {name:'La Chèvre Miel', p29:'12,90 €', p33:'14,90 €', desc:'Crème fraîche légère, chèvre, miel, mozzarella.'},
-      {name:'La So Curry', p29:'12,90 €', p33:'14,90 €', desc:'Crème fraîche, poulet, sauce curry, poivrons, oignons, olives, miel, mozzarella.'}
-    ],
-    autres: [
-      {name:'Menu Bambino', price:'7,00 €', desc:'Pizza Fromage ou Jambon ou Reine + 1 boisson + 1 Kinder.'},
-      {name:'Calzone Nutella', price:'4,50 €', desc:'Nutella, banane ou poire.'},
-      {name:'Häagen Dazs Macadamia', price:'4 €', desc:'100 ml'},
-      {name:'Eau de source (50cl)', price:'1 €', desc:''},
-      {name:'Orangina (33cl)', price:'1,90 €', desc:''},
-      {name:'Fuze Tea (33cl)', price:'1,90 €', desc:''},
-      {name:'Coca-Cola (33cl)', price:'1,90 €', desc:''},
-      {name:'Schweppes (33cl)', price:'1,90 €', desc:''},
-      {name:'Oasis (50cl)', price:'1 €', desc:''},
-      {name:'Heineken (33cl)', price:'2 €', desc:''},
-      {name:'Lambrusco rouge/rosé (75cl)', price:'7 €', desc:''},
-      {name:'Desperados (33cl)', price:'3 €', desc:''},
-      {name:'Coca-Cola (1,25L)', price:'3 €', desc:''},
-      {name:'Fuze Tea (1,5L)', price:'3 €', desc:''},
-      {name:'Orangina (1,5L)', price:'3 €', desc:''}
-    ] };
-
-  const cats = ['basiques','classiques','gourmandes','speciales','autres'];
-  let current = 'basiques';
+  /* Liste unique : pizzas faites le matin, vendues en distributeur.
+     Un seul prix par produit (champ "price"). Ordre = carte officielle. */
+  const pizzas = [
+    {name:'La 4 Fromages', price:'12,90 €', desc:'Tomate, olives, mozzarella, parmesan, roquefort, emmental.'},
+    {name:'La Bolo', price:'13,00 €', desc:'Tomates, viande de bœuf, olives, oignons, mozzarella.'},
+    {name:'La Burger', price:'13,90 €', desc:'Tomates, olives, viande de bœuf, cheddar, cornichon, sauce burger.'},
+    {name:'La Campagnarde', price:'11,90 €', desc:'Tomates, olives, lardons, crème, mozzarella, persillade.'},
+    {name:'La Casa Del Cookie', price:'5,00 €', desc:'Chocolat, cacahuètes, caramel beurre salé, 170 g.'},
+    {name:'La Chèvre Miel', price:'12,90 €', desc:'Chèvre, crème, olives, miel.'},
+    {name:'La Chorizo', price:'12,90 €', desc:'Chorizo, olives, tomate, poivrons grillés, oignons, mozzarella.'},
+    {name:'La Délicieuse', price:'13,90 €', desc:'Tomate, champignons de Paris, lardons, mozzarella, chorizo, crème, persillade, poivrons 3 couleurs.'},
+    {name:'La Jambon', price:'10,90 €', desc:'Tomate, olives, jambon blanc, mozzarella.'},
+    {name:'La Kebab', price:'11,90 €', desc:'Tomates, olives, sauce kebab, oignons, viande kebab de volaille (Halal).'},
+    {name:'La Magret', price:'13,90 €', desc:'Tomate, olives, lardons, mozzarella, magret de canard, crème, persillade.'},
+    {name:'La Merguez', price:'11,50 €', desc:'Tomates, olives, oignons, mozzarella, poivrons 3 couleurs, merguez (Halal).'},
+    {name:'La Raclette', price:'12,90 €', desc:'Crème, oignons, pomme de terre, olives, bacon, mozzarella, raclette.'},
+    {name:'La Reine', price:'11,90 €', desc:'Tomate, jambon blanc, champignons de Paris, mozzarella.'},
+    {name:'La Savoyarde', price:'12,90 €', desc:'Tomate, pomme de terre, lardons, mozzarella, reblochon, crème.'},
+    {name:'La So Curry', price:'13,90 €', desc:'Crème, oignons, poulet, mozzarella, curry, poivrons 3 couleurs, miel.'},
+    {name:'Panuozzo Nutella', price:'4,90 €', desc:''}
+  ];
 
   const grid = document.getElementById('pizza-grid');
-  const priceBlock = p => {
-    // deux formats (⌀29 / ⌀33) si dispo, sinon prix unique
-    if (p.p29 && p.p33){
-      return `<span class="prices">`
-        + `<span class="psz"><span class="dia">⌀29</span><span class="price">${p.p29}</span></span>`
-        + `<span class="psz"><span class="dia">⌀33</span><span class="price">${p.p33}</span></span>`
-        + `</span>`;
-    }
-    return `<span class="prices"><span class="price">${p.price || ''}</span></span>`;
-  };
-  const render = cat => {
+  if (grid){
     grid.innerHTML = '';
-    (pizzas[cat] || []).forEach(p => {
+    pizzas.forEach(p => {
       const card = document.createElement('div');
       card.className = 'pizza';
       card.innerHTML = `
-        <h3><span class="pizza-name">${p.name}</span>${priceBlock(p)}</h3>
+        <h3><span class="pizza-name">${p.name}</span><span class="prices"><span class="price">${p.price || ''}</span></span></h3>
         ${p.desc ? `<p>${p.desc}</p>` : ''}
         <div class="hr"></div>`;
       grid.appendChild(card);
     });
-  };
-
-  const tabsEl = document.querySelector('.tabs');
-  const selectCat = cat => {
-    if (!pizzas[cat]) return;
-    current = cat;
-    document.querySelectorAll('.tab').forEach(b => {
-      const on = b.dataset.cat === cat;
-      b.classList.toggle('active', on);
-      b.setAttribute('aria-selected', on ? 'true' : 'false');
-      if (on && tabsEl && tabsEl.scrollWidth > tabsEl.clientWidth){
-        b.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
-      }
-    });
-    render(cat);
-  };
-  selectCat('basiques');
-
-  document.addEventListener('click', e => {
-    const btn = e.target.closest('.tab');
-    if (btn) selectCat(btn.dataset.cat);
-  });
-  document.querySelectorAll('.tab').forEach(tb => {
-    tb.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tb.click(); }
-    });
-  });
-
-  /* Swipe horizontal sur la zone carte pour changer de catégorie (mobile) */
-  const viewport = document.querySelector('.carte-viewport');
-  if (viewport){
-    let sx = 0, sy = 0, tracking = false;
-    viewport.addEventListener('touchstart', e => {
-      sx = e.touches[0].clientX; sy = e.touches[0].clientY; tracking = true;
-    }, {passive:true});
-    viewport.addEventListener('touchend', e => {
-      if (!tracking) return;
-      tracking = false;
-      const dx = e.changedTouches[0].clientX - sx;
-      const dy = e.changedTouches[0].clientY - sy;
-      if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.6){
-        let i = cats.indexOf(current);
-        i = dx < 0 ? Math.min(i + 1, cats.length - 1) : Math.max(i - 1, 0);
-        selectCat(cats[i]);
-      }
-    }, {passive:true});
   }
 
   const faqArea  = document.querySelector('.faq-area');
   const faqPanel = document.getElementById('faq-panel');
   const faqText  = {
-    q1: `Au départ, La Solina est une pizzeria artisanale ouverte de 18h à 22h. Les pizzas sont faites à la main avec des produits frais. Pour permettre à tout le monde d’en profiter aussi le reste de la journée, nous avons ajouté des distributeurs. Résultat : aujourd’hui, La Solina = pizzeria + distributeurs, pour déguster nos pizzas artisanales à toute heure.`,
-    q2: `Oui, 100 % artisanales. Nous préparons nos pizzas à la main dans la pizzeria, avec les mêmes ingrédients frais que celles servies au comptoir. Elles sont stockées en chambre froide dans le respect des règles d’hygiène. À la commande, la machine termine la cuisson si vous la voulez chaude, ou vous la remet immédiatement si vous la préférez froide.`,
+    q1: `La Solina, c’est uniquement des distributeurs automatiques de pizzas. Chaque matin, nous préparons nos pizzas à la main avec des produits frais, puis nous les mettons à disposition dans nos distributeurs répartis sur le secteur. Pas de comptoir ni d’attente : vous récupérez votre pizza artisanale quand vous voulez, près de chez vous.`,
+    q2: `Oui, 100 % artisanales. Nous les préparons à la main le matin, avec des produits frais, puis nous les plaçons dans la chambre froide du distributeur, dans le respect des règles d’hygiène. À la commande, la machine termine la cuisson si vous la voulez chaude, ou vous la remet immédiatement si vous la préférez froide.`,
     q3: `1) Nous plaçons nos pizzas fraîches dans la chambre froide intégrée. 2) Vous choisissez votre recette sur l’écran. 3) Si vous la voulez chaude, elle passe dans le four intégré ; si vous la voulez froide, elle vous est remise directement. Tout est automatique, propre et rapide.`,
-    q4: `Les distributeurs sont disponibles 24h/24 et 7j/7. Idéal pour une soirée, un match ou une faim tardive. La pizzeria, elle, est ouverte de 18h à 22h. Grâce aux distributeurs, vous pouvez récupérer une pizza artisanale quand vous voulez, sans attente.`,
-    q5: `Non. Jamais d’industriel ni de surgelé chez La Solina. Avant les distributeurs, nous faisions déjà uniquement des pizzas artisanales : pâte maison, ingrédients de qualité. Les distributeurs servent exactement ces mêmes pizzas, simplement disponibles à toute heure.`,
+    q4: `Nos distributeurs sont accessibles à toute heure, tous les jours. Idéal pour une soirée, un match ou une faim tardive : vous récupérez une pizza artisanale quand vous voulez, sans attente.`,
+    q5: `Non. Jamais d’industriel ni de surgelé chez La Solina : pâte maison, ingrédients frais et de qualité, pizzas préparées à la main chaque matin. Les distributeurs proposent exactement ces pizzas artisanales, simplement disponibles quand vous voulez.`,
     q6: `C’est très rapide : 3 minutes 30 pour une pizza chaude (cuisson finale au four intégré) et environ 30 secondes pour une pizza froide (remise directe depuis la chambre froide).`,
     q7: `Le paiement se fait par carte (sans contact accepté) et via téléphone (Apple Pay, Google Pay…). Pour la rapidité et la sécurité, les espèces ne sont pas acceptées sur les distributeurs.`,
     q8: `“Indisponible” = victime de son succès ! Nous réapprovisionnons plusieurs fois par jour, mais certaines recettes partent vite. Revenez un peu plus tard ou choisissez une autre recette : vous trouverez toujours de quoi vous régaler.`
@@ -730,6 +652,118 @@ nav a:hover{opacity:1}
     faqPanel.addEventListener('click', e => {
       if (e.target.closest('.faq-back')) closeFaq();
     });
+  }
+})();
+</script>
+
+<!-- ===== Carte Leaflet des distributeurs (remontée sur l'accueil) ===== -->
+<script>
+(()=>{
+  const mapEl = document.getElementById('map');
+  if (!mapEl || typeof L === 'undefined') return;
+
+  const map = L.map('map', { scrollWheelZoom:false });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'&copy; OpenStreetMap'}).addTo(map);
+
+  const addresses = [
+    { name:'Tarbes : 15bis Bd du Général de Lattre de Tassigny', address:'15bis Bd du Général de Lattre de Tassigny, 65000 Tarbes, France' },
+    { name:'Séméac : 111 Avenue des Sports', address:'111 Avenue des Sports, 65600 Séméac, France' },
+    { name:'Orleix : 11 Route de Rabastens', address:'11 Route de Rabastens, 65800 Orleix, France' },
+    { name:'Horgues : 21 Rue du Pic du Midi', address:'21 Rue du Pic du Midi, 65310 Horgues, France' },
+    { name:'Adé : 3 Avenue des Pyrénées', address:'3 Avenue des Pyrénées, 65100 Adé, France' },
+    { name:'Lourdes : 4 Rue Lucien Pourxet', address:'4 Rue Lucien Pourxet, 65100 Lourdes, France' }
+  ];
+
+  const routeBtn = document.getElementById('routeBtn');
+
+  function geocode(q){
+    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=fr&q=${encodeURIComponent(q)}`;
+    return fetch(url, {headers:{'Accept':'application/json'}}).then(r=>r.json());
+  }
+
+  Promise.all(addresses.map(a=>geocode(a.address))).then(results => {
+    const bounds = L.latLngBounds();
+    results.forEach((res, i) => {
+      if(!res || !res[0]) return;
+      const lat = parseFloat(res[0].lat), lon = parseFloat(res[0].lon);
+      const a = addresses[i];
+      const m = L.marker([lat, lon]).addTo(map);
+      m.bindPopup(`<strong>${a.name}</strong><br>${a.address}<br><small>Cliquez pour définir l'itinéraire</small>`);
+      m.on('click', () => {
+        routeBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=driving`;
+        routeBtn.removeAttribute('disabled');
+      });
+      bounds.extend([lat, lon]);
+    });
+    if(!bounds.isValid()){
+      map.setView([43.232, 0.073], 12);
+    } else {
+      map.fitBounds(bounds.pad(0.2));
+      const first = results.find(r => r && r[0]);
+      if(first){
+        const lat = parseFloat(first[0].lat), lon = parseFloat(first[0].lon);
+        routeBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=driving`;
+        routeBtn.removeAttribute('disabled');
+      }
+    }
+  }).catch(()=>{ map.setView([43.232, 0.073], 12); });
+
+  routeBtn.addEventListener('click', e => { if(routeBtn.hasAttribute('disabled')) e.preventDefault(); });
+})();
+</script>
+
+<!-- ===== Défilement doux ralenti sur les liens d'ancre ===== -->
+<script>
+(()=>{
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const header = document.querySelector('.site-header');
+  const easeInOutCubic = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+
+  const targetTop = el => {
+    const offset = (header ? header.offsetHeight : 72) + 12;
+    return Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - offset);
+  };
+
+  const animateTo = (el, duration=820) => {
+    if (reduce){ window.scrollTo(0, targetTop(el)); return; }
+    const start = window.pageYOffset;
+    const end = targetTop(el);
+    const dist = end - start;
+    if (Math.abs(dist) < 2) return;
+    let startTime = null;
+    const step = now => {
+      if (startTime === null) startTime = now;
+      const p = Math.min(1, (now - startTime) / duration);
+      window.scrollTo(0, start + dist * easeInOutCubic(p));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+
+  // Interception des clics sur les ancres internes
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href*="#"]');
+    if (!a) return;
+    const href = a.getAttribute('href');
+    if (!href || href === '#') return;
+    const id = href.slice(href.indexOf('#') + 1);
+    // ne traite que les ancres de CETTE page
+    const samePage = href.startsWith('#') || href.startsWith('./#') || href.startsWith('/#');
+    if (!samePage || !id) return;
+    const el = document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    history.pushState(null, '', '#' + id);
+    animateTo(el);
+  });
+
+  // Arrivée avec un hash (ex. redirection depuis l'ancienne page distributeurs)
+  if (location.hash.length > 1){
+    const el = document.getElementById(location.hash.slice(1));
+    if (el){
+      window.scrollTo(0, 0);
+      setTimeout(()=>animateTo(el, 1000), 120);
+    }
   }
 })();
 </script>
