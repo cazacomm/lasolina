@@ -1,0 +1,48 @@
+# La Solina
+
+> Pizzas artisanales vendues en distributeurs automatiques accessibles 24h/24 et 7j/7, à Tarbes et dans les Hautes-Pyrénées (Occitanie, France).
+
+La Solina prépare ses pizzas à la main chaque matin — pâte maison, produits frais — puis les met à disposition dans des distributeurs automatiques équipés d'une chambre froide et d'un four intégré. Il n'y a ni pizza industrielle ni pizza surgelée. Le client choisit sa recette sur l'écran, puis la reçoit chaude (cuisson finale d'environ 3 minutes 30) ou froide (remise en environ 30 secondes).
+
+## Identité
+
+- **Nom** : La Solina
+- **Activité** : pizzas artisanales, distributeurs automatiques de pizzas
+- **Adresse** : 15bis Bd du Général de Lattre de Tassigny, 65000 Tarbes, France
+- **Téléphone** : +33 5 62 51 70 17
+- **Site** : https://www.lasolinapizza.fr/
+- **Zone desservie** : Tarbes, Séméac, Orleix, Horgues, Adé, Lourdes, Aureilhan, Barbazan-Debat, Ibos — Hautes-Pyrénées (65)
+- **Disponibilité** : distributeurs accessibles 24h/24, 7j/7
+- **Paiement** : carte bancaire (sans contact), Apple Pay, Google Pay. Espèces non acceptées sur les distributeurs.
+
+## Emplacements des distributeurs
+
+- Tarbes — 15bis Bd du Général de Lattre de Tassigny, 65000
+- Séméac — 111 Av. des Sports, 65600
+- Orleix — 11 Route de Rabastens, 65800
+- Horgues — 21 Rue du Pic du Midi, 65310
+- Adé — 3 Av. des Pyrénées, 65100
+- Lourdes — 4 Rue Lucien Pourxet, 65100
+
+## Pages principales
+
+- [Accueil](https://www.lasolinapizza.fr/) : présentation, carte interactive des distributeurs, carte des pizzas, questions fréquentes, contact.
+- [Nos distributeurs](https://www.lasolinapizza.fr/#distributeurs) : carte interactive avec itinéraire vers le distributeur le plus proche.
+- [Notre carte](https://www.lasolinapizza.fr/#carte) : liste des pizzas et desserts disponibles.
+- [Questions fréquentes](https://www.lasolinapizza.fr/#faq) : fonctionnement des distributeurs, fraîcheur, paiement, délais.
+- [Mentions légales](https://www.lasolinapizza.fr/mentions.html)
+
+## Blog
+
+- [Le blog La Solina](https://www.lasolinapizza.fr/blog/) : conseils, coulisses et bons plans autour de la pizza artisanale en distributeur.
+- [Où trouver une pizza à Tarbes en pleine nuit ?](https://www.lasolinapizza.fr/blog/pizza-nuit-tarbes-distributeur-24h/) : guide des distributeurs 24h/24 — fonctionnement, adresses, paiement, temps d'attente.
+
+## Flux et fichiers
+
+- Flux RSS : https://www.lasolinapizza.fr/rss.xml
+- Sitemap : https://www.lasolinapizza.fr/sitemap.xml
+
+## Réseaux sociaux
+
+- Instagram : https://www.instagram.com/lasolina_pizzas/
+- Facebook : https://www.facebook.com/lasolina.pizzas

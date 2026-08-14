@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Le blog La Solina</title>
+    <link>https://www.lasolinapizza.fr/blog/</link>
+    <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
+    <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
+    <language>fr-FR</language>
+    <lastBuildDate>Fri, 14 Aug 2026 09:00:00 +0200</lastBuildDate>
+    <image>
+      <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
+      <title>Le blog La Solina</title>
+      <link>https://www.lasolinapizza.fr/blog/</link>
+    </image>
+
+    <item>
+      <title>Où trouver une pizza à Tarbes en pleine nuit ? Le guide des distributeurs 24h/24</title>
+      <link>https://www.lasolinapizza.fr/blog/pizza-nuit-tarbes-distributeur-24h/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/pizza-nuit-tarbes-distributeur-24h/</guid>
+      <pubDate>Fri, 14 Aug 2026 09:00:00 +0200</pubDate>
+      <category>Distributeurs</category>
+      <description>Sortie de match, garde de nuit, soirée qui s'étire : à Tarbes et alentour, les distributeurs restent accessibles quand les cuisines sont fermées. Fonctionnement, adresses, paiement et temps d'attente.</description>
+    </item>
+
+  </channel>
+</rss>
