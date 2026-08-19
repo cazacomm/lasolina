@@ -63,6 +63,11 @@ EXIT_OK, EXIT_ERROR, EXIT_NOTHING_TODO = 0, 1, 78
 MIN_WORDS, MAX_WORDS = 900, 1900
 PROMPT_MIN_WORDS, PROMPT_MAX_WORDS = 1200, 1500
 
+# Nombre maximal d'appels OpenAI pour un article, rattrapages compris.
+# Le modèle rend ~600 mots en première passe et gagne 60 à 75 % à chaque
+# reprise : deux appels plafonnent vers 1000-1100 mots, trois franchissent 1200.
+MAX_CALLS = 3
+
 MONTHS_FR = ["janvier", "février", "mars", "avril", "mai", "juin",
              "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
 DAYS_EN = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -306,6 +311,13 @@ RÈGLES DE CONTENU
   **gras** et [libellé](/chemin). Les liens sont forcément internes.
 - Maillage : place au moins deux liens vers /#distributeurs, /#carte ou /#faq,
   et un lien vers /blog/, répartis dans le corps.
+- Ancres de liens : le libellé doit décrire ce qu'on trouve au bout du lien et
+  se lire naturellement dans la phrase. Jamais un mot sec comme [carte](/#carte),
+  [blog](/blog/) ou [distributeurs](/#distributeurs). Écris par exemple
+  [voir nos distributeurs à Tarbes et alentour](/#distributeurs),
+  [découvrir notre carte de pizzas artisanales](/#carte) ou
+  [nos autres articles sur la pizza artisanale](/blog/). Trois mots minimum,
+  et pas deux fois la même formulation dans l'article.
 
 GARDE-FOUS — NON NÉGOCIABLES
 N'invente AUCUN prix, AUCUN chiffre d'affaires ou de fréquentation, AUCUN nom de
@@ -381,7 +393,7 @@ def mock_content(cfg: dict, topic: dict) -> dict:
               "détailler chaque cas de figure plutôt que de donner une réponse unique qui "
               "ne conviendrait qu'à une minorité de situations rencontrées sur le terrain.")
     sections = []
-    for i in range(6):
+    for i in range(7):          # 7 sections : le mock dépasse la cible de 1200
         content = [{"type": "p", "text": filler}, {"type": "p", "text": filler}]
         if i == 0:
             content.insert(1, {"type": "h3", "text": "Un point de départ concret"})
@@ -993,8 +1005,13 @@ def main() -> int:
         errors = validate_content(data, cfg)
         wc = content_word_count(data)
 
-        # Rattrapage : une seule seconde tentative, déclenchée sur la CIBLE.
-        if not args.mock and not PROMPT_MIN_WORDS <= wc <= MAX_WORDS:
+        # Rattrapage : on relance tant que le volume est hors cible, dans la
+        # limite de MAX_CALLS appels au total. Chaque reprise repart de la
+        # MEILLEURE copie obtenue jusque-là, pas de la dernière : le modèle
+        # développe alors un texte déjà long au lieu de repartir d'un plus court.
+        calls = 1
+        while (not args.mock and calls < MAX_CALLS
+               and not PROMPT_MIN_WORDS <= wc <= MAX_WORDS):
             if wc < PROMPT_MIN_WORDS:
                 correction = (
                     f"Tu as généré {wc} mots pour le corps (FAQ exclue), il en faut au "
@@ -1007,25 +1024,27 @@ def main() -> int:
                     f"il en faut au plus {PROMPT_MAX_WORDS}. Resserre chaque section "
                     "sans en supprimer aucune.")
             correction += " Réponds par le seul objet JSON complet."
-            log(f"Volume sous la cible ({wc} mots, cible {PROMPT_MIN_WORDS}) — "
-                "seconde et dernière tentative.")
+            calls += 1
+            log(f"Volume hors cible ({wc} mots, cible {PROMPT_MIN_WORDS}) — "
+                f"tentative {calls}/{MAX_CALLS}.")
             try:
                 retry = generate_content(cfg, system, user, followup=[
                     {"role": "assistant", "content": json.dumps(data, ensure_ascii=False)},
                     {"role": "user", "content": correction},
                 ])
             except (ValueError, json.JSONDecodeError) as exc:
-                fail(f"Seconde tentative inexploitable : {exc}")
+                fail(f"Tentative {calls} inexploitable : {exc}")
+                break
+            retry_errors = validate_content(retry, cfg)
+            retry_wc = content_word_count(retry)
+            log(f"Tentative {calls} : {retry_wc} mots, {len(retry_errors)} erreur(s).")
+            if volume_rank(retry_errors, retry_wc) < volume_rank(errors, wc):
+                data, errors, wc = retry, retry_errors, retry_wc
+                log(f"Copie retenue : la n°{calls}.")
             else:
-                retry_errors = validate_content(retry, cfg)
-                retry_wc = content_word_count(retry)
-                log(f"Seconde tentative : {retry_wc} mots, "
-                    f"{len(retry_errors)} erreur(s).")
-                if volume_rank(retry_errors, retry_wc) < volume_rank(errors, wc):
-                    data, errors, wc = retry, retry_errors, retry_wc
-                    log("Copie retenue : la seconde.")
-                else:
-                    log("Copie retenue : la première (la seconde n'est pas meilleure).")
+                log("Copie retenue : la précédente (la nouvelle n'est pas meilleure).")
+        if calls > 1:
+            log(f"{calls} appels OpenAI au total pour cet article.")
 
         if errors:
             fail("Contenu rejeté par la validation — aucun fichier écrit :")
