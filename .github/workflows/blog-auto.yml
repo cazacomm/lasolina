@@ -10,6 +10,11 @@ on:
         description: "Simulation : génère l'article mais n'écrit et ne pousse rien"
         type: boolean
         default: false
+      rewrite:
+        description: "Slug d'un article existant à régénérer (laisser vide pour publier le sujet suivant)"
+        type: string
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -46,10 +51,14 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           set +e
+          args=""
+          if [ -n "${{ inputs.rewrite }}" ]; then
+            args="--rewrite ${{ inputs.rewrite }}"
+          fi
           if [ "${{ inputs.dry_run }}" = "true" ]; then
-            python scripts/generate-article.py --dry-run
+            python scripts/generate-article.py --dry-run $args
           else
-            python scripts/generate-article.py
+            python scripts/generate-article.py $args
           fi
           code=$?
           set -e
@@ -70,7 +79,12 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "chore(blog): article auto du $(date -u +%Y-%m-%d)"
+          if [ -n "${{ inputs.rewrite }}" ]; then
+            msg="chore(blog): reecriture de ${{ inputs.rewrite }}"
+          else
+            msg="chore(blog): article auto du $(date -u +%Y-%m-%d)"
+          fi
+          git commit -m "$msg"
           git push origin HEAD:${GITHUB_REF_NAME}
           echo "::notice::Article publié et poussé."
 
@@ -82,6 +96,7 @@ jobs:
             echo ""
             echo "- Code de sortie du script : \`${{ steps.generate.outputs.exit_code }}\`"
             echo "- Simulation : \`${{ inputs.dry_run || 'false' }}\`"
+            echo "- Réécriture : \`${{ inputs.rewrite || '(aucune)' }}\`"
             echo ""
             echo "Codes : \`0\` succès · \`78\` aucun sujet restant · \`1\` erreur."
           } >> "$GITHUB_STEP_SUMMARY"

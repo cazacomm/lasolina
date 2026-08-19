@@ -53,35 +53,72 @@ que le choix du sujet, la validation et les mises à jour de fichiers fonctionne
    `<!-- lasolina-topic: N -->` juste après `<body>`. Un sujet marqué n'est jamais repris.
 4. Choisit le premier sujet non traité, dans l'ordre de la liste.
 5. **Relit l'article de référence** (`blog/pizza-nuit-tarbes-distributeur-24h/index.html`)
-   et l'envoie au modèle comme gabarit. Aucun template HTML n'est dupliqué dans le script :
-   si le gabarit évolue, les articles suivants suivent automatiquement.
-6. Appelle OpenAI (`gpt-4o`, `temperature` 0.7, `max_tokens` 9000). Le prompt
-   annonce un volume **strictement entre 1600 et 1800 mots** (corps hors FAQ).
-   Cette barre est **volontairement plus haute que la cible réelle de 1200** :
-   les modèles sous-écrivent d'environ 30 % par rapport à la consigne (844 mots
-   rendus pour 1200 demandés). On demande donc 1600 pour atterrir au-dessus de
-   1200. Trois niveaux à ne pas confondre : `ASK_MIN/MAX_WORDS` (annoncé au
-   modèle) · `PROMPT_MIN_WORDS` (cible interne, seuil de rattrapage) ·
-   `MIN/MAX_WORDS` (bornes de validation).
-7. **Valide** avant toute écriture : DOCTYPE, `</html>`, marqueur, un seul `<h1>`,
-   canonical exact, OG + Twitter Card, `blog.css` lié, meta description < 155 caractères,
-   3 blocs JSON-LD (`Article`, `BreadcrumbList`, `FAQPage`) parsables, 5 questions de FAQ,
-   volume entre 900 et 1900 mots (tolérance ±30 % autour de la cible 1300).
-   Le moindre échec ⇒ code 1, **rien n'est écrit**.
+   et s'en sert de gabarit. Aucun template HTML n'est dupliqué dans le script :
+   header, footer, favicons, polices, feuille de style et bloc CTA en sont extraits
+   à chaque exécution, donc si le gabarit évolue les articles suivants suivent.
+6. Appelle OpenAI (`gpt-4o`, `temperature` 0.7, `max_tokens` 9000, réponse forcée
+   en `json_object`) et lui demande **uniquement le contenu éditorial** :
 
-   Le volume se compte sur le **corps rédigé uniquement** : contenu du `<main>`,
-   **FAQ exclue** (`strip_faq()`) — même périmètre que celui annoncé au modèle.
-   Compter la FAQ gonflait le total d'environ 175 mots non rédactionnels.
+   ```json
+   {"title": …, "h1": …, "breadcrumb": …, "meta_description": …, "lede": …,
+    "sections": [{"h2": …, "content": [{"type": "p|h3|ul|ol|strong", "text": …}]}],
+    "faq": [{"question": …, "answer": …}]}
+   ```
+
+   Le modèle **n'écrit plus une ligne de HTML**. Auparavant il régénérait la page
+   entière : les deux tiers de ses tokens de sortie partaient en balisage
+   (`<head>`, JSON-LD, header, footer), ce qui plafonnait le corps rédigé autour
+   de 850 mots quelle que soit la consigne — 764, 844, 848 mots sur des runs
+   successifs, y compris en demandant 1600. Le prompt est passé de 23 450 à
+   ~4 700 caractères.
+
+   Seul balisage autorisé dans les textes : `**gras**` et `[libellé](/chemin)`.
+   Les liens sont restreints aux chemins internes, un lien externe est donc
+   structurellement impossible. Tout le reste est échappé — le modèle ne peut pas
+   injecter de HTML.
+7. **Valide le contenu** avant toute écriture : champs présents, longueur du
+   `title` (40–70) et de la `meta_description` (< 155), types de blocs connus,
+   exactement 5 questions de FAQ, maillage interne (≥ 2 liens vers
+   `/#distributeurs`, `/#carte` ou `/#faq` et ≥ 1 vers `/blog/`), volume entre
+   900 et 1900 mots. Le moindre échec ⇒ code 1, **rien n'est écrit**.
+
+   Les contrôles sur le canonical, l'Open Graph, la Twitter Card, le marqueur,
+   le `<h1>` unique et la validité des JSON-LD **ont disparu de cette étape** :
+   ces éléments sont désormais fabriqués par le script (`json.dumps` pour les
+   JSON-LD) et ne peuvent plus être faux. Ils restent vérifiés une fois la page
+   assemblée, par `validate_assembled()`, qui contrôle notre propre code et non
+   le modèle.
+
+   Le volume se compte sur le **contenu** (`content_word_count()`), pas sur du
+   HTML : `lede` + sections, FAQ exclue. Plus de balises ni de boilerplate dans
+   le total.
 
    *Rattrapage :* dès que le corps passe **sous la cible de 1200 mots** — même si
-   la validation passerait — le script relance **un unique** appel OpenAI avec un
-   prompt correctif (« tu as généré X mots, il en faut au moins 1200 — réécris en
-   développant »). Il garde ensuite **la meilleure des deux copies** : une version
-   valide prime sur une version invalide, puis la plus proche de la cible ; une
-   seconde passe ratée ne fait donc jamais perdre une première passe correcte.
-   Plafond strict : **2 appels**, jamais plus.
-8. Écrit `blog/<slug>/index.html`, puis met à jour `blog/index.html` (carte + JSON-LD),
+   la validation passerait — le script relance **un unique** appel avec un prompt
+   correctif. Il garde ensuite **la meilleure des deux copies** : une version
+   valide prime sur une version invalide, puis la plus proche de la cible. Plafond
+   strict : **2 appels**.
+8. **Assemble la page** : `<head>` repris du gabarit avec seulement les champs
+   propres à l'article remplacés (title, description, canonical, OG, Twitter,
+   dates), les trois blocs JSON-LD sérialisés depuis le contenu, le marqueur
+   d'idempotence inséré après `<body>`, le `<main>` construit de toutes pièces,
+   header et footer repris tels quels.
+9. Écrit `blog/<slug>/index.html`, puis met à jour `blog/index.html` (carte + JSON-LD),
    `sitemap.xml`, `rss.xml` et `llms.txt`.
+
+## 4 bis. Réécrire un article existant
+
+```bash
+python scripts/generate-article.py --rewrite <slug>
+```
+
+Régénère un article déjà publié et **écrase** son fichier. Le sujet est retrouvé
+via le marqueur `<!-- lasolina-topic: N -->` présent dans le fichier, donc aucun
+risque de se tromper de sujet. Le teaser de `blog/index.html` et l'entrée
+`rss.xml` sont resynchronisés (`refresh_entries()`) : les updaters normaux sont
+idempotents par URL et laisseraient sinon le texte de l'ancienne version.
+
+Disponible aussi depuis Actions : champ **rewrite** du `workflow_dispatch`.
 
 ## 5. Idempotence
 
