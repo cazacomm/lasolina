@@ -45,11 +45,16 @@ LLMS = ROOT / "llms.txt"
 
 EXIT_OK, EXIT_ERROR, EXIT_NOTHING_TODO = 0, 1, 78
 
-# Volume de l'article. Les bornes de validation sont larges (tolérance ±30 %
-# autour de la cible 1300) ; les bornes annoncées au modèle sont plus strictes,
-# pour qu'une dérive de rédaction reste rattrapable au lieu d'être fatale.
+# Volume de l'article, sur trois niveaux distincts :
+#  · MIN/MAX_WORDS      : bornes de validation, larges (±30 % autour de 1300).
+#  · PROMPT_MIN_WORDS   : cible interne — en dessous, on relance le modèle.
+#  · ASK_MIN/MAX_WORDS  : ce qu'on ANNONCE au modèle. Volontairement plus haut
+#    que la cible : gpt-4o comme gpt-4o-mini sous-écrivent d'environ 30 % par
+#    rapport à la consigne (844 mots demandés à 1200). On demande donc 1600-1800
+#    pour atterrir au-dessus de 1200.
 MIN_WORDS, MAX_WORDS = 900, 1900
-PROMPT_MIN_WORDS, PROMPT_MAX_WORDS = 1200, 1500
+PROMPT_MIN_WORDS = 1200
+ASK_MIN_WORDS, ASK_MAX_WORDS = 1600, 1800
 
 MONTHS_FR = ["janvier", "février", "mars", "avril", "mai", "juin",
              "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
@@ -242,13 +247,9 @@ def load_reference_article(cfg: dict, slugs: set[str]) -> tuple[str, str]:
 def volume_rank(errors: list[str], wc: int) -> tuple[int, int]:
     """Clé de comparaison entre deux copies : une version valide prime toujours,
     puis on préfère celle qui est la plus proche de la fourchette cible."""
-    if wc < PROMPT_MIN_WORDS:
-        gap = PROMPT_MIN_WORDS - wc
-    elif wc > PROMPT_MAX_WORDS:
-        gap = wc - PROMPT_MAX_WORDS
-    else:
-        gap = 0
-    return (1 if errors else 0, gap)
+    deficit = max(0, PROMPT_MIN_WORDS - wc)   # sous la cible interne
+    excess = max(0, wc - MAX_WORDS)           # au-delà de la borne haute
+    return (1 if errors else 0, deficit + excess)
 
 
 def build_prompt(cfg: dict, topic: dict, reference_html: str,
@@ -261,11 +262,11 @@ def build_prompt(cfg: dict, topic: dict, reference_html: str,
         "Tu produis du HTML complet, valide et prêt à publier. "
         "Tu ne renvoies JAMAIS de bloc de code markdown, JAMAIS de commentaire hors HTML : "
         "ta réponse commence par <!DOCTYPE html> et se termine par </html>. "
-        "VOLUME : le corps de l'article fait STRICTEMENT entre {min} et {max} mots, "
-        "comptés hors FAQ. Compte les mots avant de renvoyer. Si tu es en dessous "
+        "VOLUME : le corps de l'article fait STRICTEMENT entre {min} et {max} mots "
+        "pour le corps hors FAQ. Compte les mots avant de renvoyer. Si tu es en dessous "
         "de {min}, développe davantage chaque section (exemples concrets, contexte "
         "local, nuances). Ne renvoie JAMAIS moins de {min} mots."
-    ).format(min=PROMPT_MIN_WORDS, max=PROMPT_MAX_WORDS)
+    ).format(min=ASK_MIN_WORDS, max=ASK_MAX_WORDS)
 
     user = f"""Rédige un nouvel article pour le blog de {cfg['site_name']}.
 
@@ -292,10 +293,10 @@ Angle : {topic['brief'] or "à développer librement dans le cadre des règles c
 - Date affichée dans .article-meta : « Publié le {today['fr']} »
 - Ancre du fil d'Ariane (3e niveau) : un libellé court tiré du sujet
 - og:image et twitter:image : {cfg['site_url']}{cfg['og_image']}
-- Longueur : STRICTEMENT entre {PROMPT_MIN_WORDS} et {PROMPT_MAX_WORDS} mots, comptés sur le
-  corps de l'article hors FAQ. Compte les mots avant de renvoyer. Si tu es en dessous
-  de {PROMPT_MIN_WORDS}, développe davantage chaque section (exemples concrets, contexte
-  local, nuances). Ne renvoie JAMAIS moins de {PROMPT_MIN_WORDS} mots.
+- Longueur : STRICTEMENT entre {ASK_MIN_WORDS} et {ASK_MAX_WORDS} mots pour le corps hors
+  FAQ. Compte les mots avant de renvoyer. Si tu es en dessous de {ASK_MIN_WORDS},
+  développe davantage chaque section (exemples concrets, contexte local, nuances).
+  Ne renvoie JAMAIS moins de {ASK_MIN_WORDS} mots.
 - FAQ : exactement {cfg['faq_questions_count']} questions, en fin d'article, dans un
   bloc .faq-block ET reprises À L'IDENTIQUE dans le JSON-LD FAQPage
 - Structure : un seul <h1>, plusieurs <h2>, des <h3> à l'intérieur des <h2>
@@ -687,12 +688,12 @@ def main() -> int:
             if wc < PROMPT_MIN_WORDS:
                 correction = (
                     f"Tu as généré {wc} mots (corps hors FAQ), il en faut au moins "
-                    f"{PROMPT_MIN_WORDS}. Réécris l'article en développant chaque "
+                    f"{ASK_MIN_WORDS}. Réécris l'article en développant chaque "
                     "section (exemples concrets, contexte local, nuances).")
             else:
                 correction = (
                     f"Tu as généré {wc} mots (corps hors FAQ), c'est trop : il en "
-                    f"faut au plus {PROMPT_MAX_WORDS}. Réécris l'article en "
+                    f"faut au plus {ASK_MAX_WORDS}. Réécris l'article en "
                     "resserrant chaque section, sans supprimer de rubrique.")
             correction += (
                 " Ne change ni la structure HTML, ni les paramètres obligatoires "

@@ -56,7 +56,13 @@ que le choix du sujet, la validation et les mises à jour de fichiers fonctionne
    et l'envoie au modèle comme gabarit. Aucun template HTML n'est dupliqué dans le script :
    si le gabarit évolue, les articles suivants suivent automatiquement.
 6. Appelle OpenAI (`gpt-4o`, `temperature` 0.7, `max_tokens` 9000). Le prompt
-   impose un volume **strictement entre 1200 et 1500 mots** (corps hors FAQ).
+   annonce un volume **strictement entre 1600 et 1800 mots** (corps hors FAQ).
+   Cette barre est **volontairement plus haute que la cible réelle de 1200** :
+   les modèles sous-écrivent d'environ 30 % par rapport à la consigne (844 mots
+   rendus pour 1200 demandés). On demande donc 1600 pour atterrir au-dessus de
+   1200. Trois niveaux à ne pas confondre : `ASK_MIN/MAX_WORDS` (annoncé au
+   modèle) · `PROMPT_MIN_WORDS` (cible interne, seuil de rattrapage) ·
+   `MIN/MAX_WORDS` (bornes de validation).
 7. **Valide** avant toute écriture : DOCTYPE, `</html>`, marqueur, un seul `<h1>`,
    canonical exact, OG + Twitter Card, `blog.css` lié, meta description < 155 caractères,
    3 blocs JSON-LD (`Article`, `BreadcrumbList`, `FAQPage`) parsables, 5 questions de FAQ,
