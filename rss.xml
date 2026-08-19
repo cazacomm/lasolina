@@ -6,12 +6,21 @@
     <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
     <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
     <language>fr-FR</language>
-    <lastBuildDate>Fri, 14 Aug 2026 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Wed, 19 Aug 2026 09:00:00 +0200</lastBuildDate>
     <image>
       <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
       <title>Le blog La Solina</title>
       <link>https://www.lasolinapizza.fr/blog/</link>
     </image>
+
+    <item>
+      <title>Distributeur de pizzas : comment ça marche vraiment, étape par étape</title>
+      <link>https://www.lasolinapizza.fr/blog/distributeur-pizzas-comment-ca-marche-etape-etape/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/distributeur-pizzas-comment-ca-marche-etape-etape/</guid>
+      <pubDate>Wed, 19 Aug 2026 09:00:00 +0200</pubDate>
+      <category>Blog</category>
+      <description>Vous êtes-vous déjà demandé comment fonctionnent les distributeurs de pizzas ? À Tarbes et dans les Hautes-Pyrénées, ces machines innovantes permettent de déguster des pizzas artisanales à toute heure. Que vous soyez de retour d'une soirée entre amis ou simplement en quête d'un repas tardif, comprendre leur fonctionnement peut rendre votre expérience encore plus agréable. Explorons ensemble les différentes étapes de ce processus, de la chambre froide au four intégré.</description>
+    </item>
 
     <item>
       <title>Où trouver une pizza à Tarbes en pleine nuit ? Le guide des distributeurs 24h/24</title>
