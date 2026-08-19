@@ -28,7 +28,7 @@
   "target_word_count": 1300,
   "faq_questions_count": 5,
   "language": "fr",
-  "model": "gpt-4o-mini",
+  "model": "gpt-4o",
   "temperature": 0.7,
   "topic_marker_prefix": "lasolina-topic",
   "og_image": "/images/photohero.jpeg",

@@ -55,17 +55,25 @@ que le choix du sujet, la validation et les mises à jour de fichiers fonctionne
 5. **Relit l'article de référence** (`blog/pizza-nuit-tarbes-distributeur-24h/index.html`)
    et l'envoie au modèle comme gabarit. Aucun template HTML n'est dupliqué dans le script :
    si le gabarit évolue, les articles suivants suivent automatiquement.
-6. Appelle OpenAI (`gpt-4o-mini`, `temperature` 0.7, `max_tokens` 9000). Le prompt
+6. Appelle OpenAI (`gpt-4o`, `temperature` 0.7, `max_tokens` 9000). Le prompt
    impose un volume **strictement entre 1200 et 1500 mots** (corps hors FAQ).
 7. **Valide** avant toute écriture : DOCTYPE, `</html>`, marqueur, un seul `<h1>`,
    canonical exact, OG + Twitter Card, `blog.css` lié, meta description < 155 caractères,
    3 blocs JSON-LD (`Article`, `BreadcrumbList`, `FAQPage`) parsables, 5 questions de FAQ,
    volume entre 900 et 1900 mots (tolérance ±30 % autour de la cible 1300).
    Le moindre échec ⇒ code 1, **rien n'est écrit**.
-   *Exception :* si le **volume** est seul en cause, le script relance **un unique**
-   appel OpenAI avec un prompt correctif (« tu as généré X mots, il en faut au moins
-   1200 — réécris en développant »), revalide, puis sort en code 1 si c'est toujours
-   hors bornes. Coût : au pire deux appels au lieu d'un.
+
+   Le volume se compte sur le **corps rédigé uniquement** : contenu du `<main>`,
+   **FAQ exclue** (`strip_faq()`) — même périmètre que celui annoncé au modèle.
+   Compter la FAQ gonflait le total d'environ 175 mots non rédactionnels.
+
+   *Rattrapage :* dès que le corps passe **sous la cible de 1200 mots** — même si
+   la validation passerait — le script relance **un unique** appel OpenAI avec un
+   prompt correctif (« tu as généré X mots, il en faut au moins 1200 — réécris en
+   développant »). Il garde ensuite **la meilleure des deux copies** : une version
+   valide prime sur une version invalide, puis la plus proche de la cible ; une
+   seconde passe ratée ne fait donc jamais perdre une première passe correcte.
+   Plafond strict : **2 appels**, jamais plus.
 8. Écrit `blog/<slug>/index.html`, puis met à jour `blog/index.html` (carte + JSON-LD),
    `sitemap.xml`, `rss.xml` et `llms.txt`.
 

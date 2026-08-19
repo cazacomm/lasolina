@@ -95,12 +95,34 @@ def slugify(title: str, max_words: int = 7) -> str:
     return "-".join(words[:max_words])
 
 
+def strip_faq(html: str) -> str:
+    """Retire le bloc .faq-block. La FAQ est du contenu structuré, pas de la
+    rédaction : le prompt annonce un volume « hors FAQ », le comptage doit
+    suivre la même règle, sinon on valide 175 mots qui n'ont pas été écrits."""
+    m = re.search(r'<div[^>]*class="[^"]*\bfaq-block\b[^"]*"[^>]*>', html)
+    if not m:
+        return html
+    # Parcours en profondeur : le bloc peut contenir des <div> imbriqués.
+    depth, pos = 1, m.end()
+    for tag in re.finditer(r"</?div\b", html[m.end():], re.I):
+        depth += -1 if tag.group().startswith("</") else 1
+        if depth == 0:
+            close = html.find(">", m.end() + tag.end())
+            pos = close + 1 if close != -1 else len(html)
+            break
+    else:
+        pos = len(html)          # bloc non refermé : on coupe jusqu'à la fin
+    return html[:m.start()] + " " + html[pos:]
+
+
 def word_count(html: str) -> int:
+    """Volume rédactionnel : contenu du <main>, FAQ et scripts exclus."""
     body = html
     m = re.search(r"<main>(.*?)</main>", html, re.S)
     if m:
         body = m.group(1)
     body = re.sub(r"<script.*?</script>", " ", body, flags=re.S)
+    body = strip_faq(body)
     return len(re.sub(r"<[^>]+>", " ", body).split())
 
 
@@ -216,6 +238,18 @@ def load_reference_article(cfg: dict, slugs: set[str]) -> tuple[str, str]:
 # ─────────────────────────────────────────────────────────────
 # Génération
 # ─────────────────────────────────────────────────────────────
+
+def volume_rank(errors: list[str], wc: int) -> tuple[int, int]:
+    """Clé de comparaison entre deux copies : une version valide prime toujours,
+    puis on préfère celle qui est la plus proche de la fourchette cible."""
+    if wc < PROMPT_MIN_WORDS:
+        gap = PROMPT_MIN_WORDS - wc
+    elif wc > PROMPT_MAX_WORDS:
+        gap = wc - PROMPT_MAX_WORDS
+    else:
+        gap = 0
+    return (1 if errors else 0, gap)
+
 
 def build_prompt(cfg: dict, topic: dict, reference_html: str,
                  rules: str, today: dict) -> tuple[str, str]:
@@ -644,38 +678,47 @@ def main() -> int:
         html = clean_output(raw)
         errors = validate(html, cfg, topic)
 
-        # Rattrapage : une seule seconde tentative, uniquement si le volume est
-        # en cause. On repasse au modèle sa propre copie et on lui demande de la
-        # reprendre — le reste des paramètres (structure, canonical, marqueur)
-        # est déjà dans le prompt initial.
+        # Rattrapage : une seule seconde tentative. Elle se déclenche dès que le
+        # corps passe sous la CIBLE de 1200 mots, même si la validation passerait
+        # — sans quoi le modèle se contente de frôler la borne basse et l'article
+        # part en ligne sous le standard éditorial.
         wc = word_count(html)
-        if errors and not args.mock and not MIN_WORDS <= wc <= MAX_WORDS:
-            if wc < MIN_WORDS:
+        if not args.mock and not PROMPT_MIN_WORDS <= wc <= MAX_WORDS:
+            if wc < PROMPT_MIN_WORDS:
                 correction = (
-                    f"Tu as généré {wc} mots, il en faut au moins {PROMPT_MIN_WORDS}. "
-                    "Réécris l'article en développant chaque section (exemples "
-                    "concrets, contexte local, nuances).")
+                    f"Tu as généré {wc} mots (corps hors FAQ), il en faut au moins "
+                    f"{PROMPT_MIN_WORDS}. Réécris l'article en développant chaque "
+                    "section (exemples concrets, contexte local, nuances).")
             else:
                 correction = (
-                    f"Tu as généré {wc} mots, c'est trop : il en faut au plus "
-                    f"{PROMPT_MAX_WORDS}. Réécris l'article en resserrant chaque "
-                    "section, sans supprimer de rubrique.")
+                    f"Tu as généré {wc} mots (corps hors FAQ), c'est trop : il en "
+                    f"faut au plus {PROMPT_MAX_WORDS}. Réécris l'article en "
+                    "resserrant chaque section, sans supprimer de rubrique.")
             correction += (
                 " Ne change ni la structure HTML, ni les paramètres obligatoires "
                 "(canonical, slug, dates, marqueur, FAQ). Renvoie UNIQUEMENT le "
                 "fichier HTML complet.")
-            log(f"Volume hors bornes ({wc} mots) — seconde et dernière tentative.")
+            log(f"Volume sous la cible ({wc} mots, cible {PROMPT_MIN_WORDS}) — "
+                "seconde et dernière tentative.")
             retry_raw = generate_html(cfg, system, user, followup=[
                 {"role": "assistant", "content": raw},
                 {"role": "user", "content": correction},
             ])
-            if retry_raw:
-                html = clean_output(retry_raw)
-                errors = validate(html, cfg, topic)
-                log(f"Seconde tentative : {word_count(html)} mots, "
-                    f"{len(errors)} erreur(s) de validation.")
-            else:
+            if not retry_raw:
                 fail("Réponse vide à la seconde tentative.")
+            else:
+                retry_html = clean_output(retry_raw)
+                retry_errors = validate(retry_html, cfg, topic)
+                retry_wc = word_count(retry_html)
+                log(f"Seconde tentative : {retry_wc} mots, "
+                    f"{len(retry_errors)} erreur(s) de validation.")
+                # On garde la meilleure des deux copies : la première peut être
+                # valide et la seconde non — auquel cas on ne perd pas le run.
+                if volume_rank(retry_errors, retry_wc) < volume_rank(errors, wc):
+                    html, errors, wc = retry_html, retry_errors, retry_wc
+                    log("Copie retenue : la seconde.")
+                else:
+                    log("Copie retenue : la première (la seconde n'est pas meilleure).")
 
         if errors:
             fail("Article rejeté par la validation — aucun fichier écrit :")
@@ -687,7 +730,7 @@ def main() -> int:
         log("Validation OK.")
         log(f"  Titre       : {meta['title']}")
         log(f"  Description : {meta['description']} ({len(meta['description'])} car.)")
-        log(f"  Volume      : {meta['words']} mots")
+        log(f"  Volume      : {meta['words']} mots (corps hors FAQ)")
 
         if args.dry_run:
             print("\n" + "═" * 70)
