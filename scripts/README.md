@@ -46,7 +46,17 @@ que le choix du sujet, la validation et les mises à jour de fichiers fonctionne
 
 ## 4. Ce que fait le script
 
-1. Lit `blog-config.json`.
+1. Lit `blog-config.json`. Tout ce qui est propre au site y vit — rien de
+   spécifique n'est codé en dur dans le script, ce qui permet de le réutiliser
+   tel quel sur un autre site en ne changeant que ce fichier :
+   `site_name`, `site_url`, `sector`, `location`, `author`, `tone`,
+   `geo_keywords`, `facts` (seuls faits chiffrés que le modèle a le droit
+   d'employer), `og_image`, `logo_path`, `default_article_section`,
+   `reference_article_slug`, `topic_marker_prefix`, `model`, `temperature`,
+   `faq_questions_count`, `target_word_count`, `language`.
+   Les clés obligatoires sont contrôlées au démarrage : il vaut mieux échouer
+   tout de suite avec un message clair que publier un JSON-LD portant le logo
+   d'un autre site.
 2. Extrait de `BLOG_WORKFLOW.md` les 12 sujets suggérés **et** les règles éditoriales,
    qui sont injectées telles quelles dans le prompt.
 3. Scanne `/blog/*/index.html` : un article généré porte un marqueur

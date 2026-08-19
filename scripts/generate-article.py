@@ -165,7 +165,8 @@ def load_config() -> dict:
     if not CONFIG_PATH.exists():
         raise FileNotFoundError(f"Configuration introuvable : {CONFIG_PATH}")
     cfg = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-    for key in ("site_name", "site_url", "sector", "location", "author"):
+    for key in ("site_name", "site_url", "sector", "location", "author",
+                "logo_path", "default_article_section"):
         if not cfg.get(key):
             raise ValueError(f"Clé manquante ou vide dans blog-config.json : {key}")
     cfg["site_url"] = cfg["site_url"].rstrip("/")
@@ -311,13 +312,9 @@ RÈGLES DE CONTENU
   **gras** et [libellé](/chemin). Les liens sont forcément internes.
 - Maillage : place au moins deux liens vers /#distributeurs, /#carte ou /#faq,
   et un lien vers /blog/, répartis dans le corps.
-- Ancres de liens : le libellé doit décrire ce qu'on trouve au bout du lien et
-  se lire naturellement dans la phrase. Jamais un mot sec comme [carte](/#carte),
-  [blog](/blog/) ou [distributeurs](/#distributeurs). Écris par exemple
-  [voir nos distributeurs à Tarbes et alentour](/#distributeurs),
-  [découvrir notre carte de pizzas artisanales](/#carte) ou
-  [nos autres articles sur la pizza artisanale](/blog/). Trois mots minimum,
-  et pas deux fois la même formulation dans l'article.
+- Ancres de liens : les libellés des liens internes doivent être descriptifs et
+  se lire naturellement dans la phrase. Interdit : les libellés secs d'un seul
+  mot comme « ici », « blog », « carte », « contact ».
 
 GARDE-FOUS — NON NÉGOCIABLES
 N'invente AUCUN prix, AUCUN chiffre d'affaires ou de fréquentation, AUCUN nom de
@@ -597,10 +594,10 @@ def build_jsonld(cfg: dict, data: dict, url: str, today: dict) -> str:
             "@type": "Organization", "name": cfg["site_name"],
             "url": f"{cfg['site_url']}/",
             "logo": {"@type": "ImageObject",
-                     "url": f"{cfg['site_url']}/images/logo-dark.jpeg"}},
+                     "url": f"{cfg['site_url']}{cfg['logo_path']}"}},
         "about": {"@id": f"{cfg['site_url']}/#restaurant"},
         "isPartOf": {"@id": f"{cfg['site_url']}/blog/#blog"},
-        "articleSection": "Distributeurs",
+        "articleSection": cfg["default_article_section"],
         "keywords": ", ".join(cfg["geo_keywords"][:6]),
     }
     breadcrumb = {
