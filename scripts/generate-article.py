@@ -45,6 +45,12 @@ LLMS = ROOT / "llms.txt"
 
 EXIT_OK, EXIT_ERROR, EXIT_NOTHING_TODO = 0, 1, 78
 
+# Volume de l'article. Les bornes de validation sont larges (tolérance ±30 %
+# autour de la cible 1300) ; les bornes annoncées au modèle sont plus strictes,
+# pour qu'une dérive de rédaction reste rattrapable au lieu d'être fatale.
+MIN_WORDS, MAX_WORDS = 900, 1900
+PROMPT_MIN_WORDS, PROMPT_MAX_WORDS = 1200, 1500
+
 MONTHS_FR = ["janvier", "février", "mars", "avril", "mai", "juin",
              "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
 DAYS_EN = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -220,8 +226,12 @@ def build_prompt(cfg: dict, topic: dict, reference_html: str,
         "Tu es rédacteur SEO/GEO senior pour une entreprise locale française. "
         "Tu produis du HTML complet, valide et prêt à publier. "
         "Tu ne renvoies JAMAIS de bloc de code markdown, JAMAIS de commentaire hors HTML : "
-        "ta réponse commence par <!DOCTYPE html> et se termine par </html>."
-    )
+        "ta réponse commence par <!DOCTYPE html> et se termine par </html>. "
+        "VOLUME : le corps de l'article fait STRICTEMENT entre {min} et {max} mots, "
+        "comptés hors FAQ. Compte les mots avant de renvoyer. Si tu es en dessous "
+        "de {min}, développe davantage chaque section (exemples concrets, contexte "
+        "local, nuances). Ne renvoie JAMAIS moins de {min} mots."
+    ).format(min=PROMPT_MIN_WORDS, max=PROMPT_MAX_WORDS)
 
     user = f"""Rédige un nouvel article pour le blog de {cfg['site_name']}.
 
@@ -248,7 +258,10 @@ Angle : {topic['brief'] or "à développer librement dans le cadre des règles c
 - Date affichée dans .article-meta : « Publié le {today['fr']} »
 - Ancre du fil d'Ariane (3e niveau) : un libellé court tiré du sujet
 - og:image et twitter:image : {cfg['site_url']}{cfg['og_image']}
-- Longueur : {cfg['target_word_count']} mots environ (entre 1200 et 1500 mots de contenu réel)
+- Longueur : STRICTEMENT entre {PROMPT_MIN_WORDS} et {PROMPT_MAX_WORDS} mots, comptés sur le
+  corps de l'article hors FAQ. Compte les mots avant de renvoyer. Si tu es en dessous
+  de {PROMPT_MIN_WORDS}, développe davantage chaque section (exemples concrets, contexte
+  local, nuances). Ne renvoie JAMAIS moins de {PROMPT_MIN_WORDS} mots.
 - FAQ : exactement {cfg['faq_questions_count']} questions, en fin d'article, dans un
   bloc .faq-block ET reprises À L'IDENTIQUE dans le JSON-LD FAQPage
 - Structure : un seul <h1>, plusieurs <h2>, des <h3> à l'intérieur des <h2>
@@ -281,7 +294,8 @@ Renvoie UNIQUEMENT le fichier HTML complet du nouvel article."""
     return system, user
 
 
-def generate_html(cfg: dict, system: str, user: str) -> str:
+def generate_html(cfg: dict, system: str, user: str,
+                  followup: list[dict] | None = None) -> str:
     try:
         from openai import OpenAI
     except ImportError as exc:
@@ -300,6 +314,7 @@ def generate_html(cfg: dict, system: str, user: str) -> str:
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": user},
+            *(followup or []),
         ],
     )
     content = (response.choices[0].message.content or "").strip()
@@ -412,8 +427,9 @@ def validate(html: str, cfg: dict, topic: dict) -> list[str]:
                       f"(trouvé : {faq_html})")
 
     wc = word_count(html)
-    if not 1000 <= wc <= 1900:
-        errors.append(f"volume hors bornes : {wc} mots")
+    if not MIN_WORDS <= wc <= MAX_WORDS:
+        errors.append(f"volume hors bornes : {wc} mots "
+                      f"(attendu {MIN_WORDS}–{MAX_WORDS})")
 
     return errors
 
@@ -612,6 +628,7 @@ def main() -> int:
         today_date = dt.date.today()
         today = {"date": today_date, "iso": today_date.isoformat(), "fr": fr_date(today_date)}
 
+        system = user = None
         if args.mock:
             log("Mode MOCK : contenu de démonstration, aucun appel API.")
             raw = mock_html(cfg, topic, reference_html, today)
@@ -626,6 +643,40 @@ def main() -> int:
 
         html = clean_output(raw)
         errors = validate(html, cfg, topic)
+
+        # Rattrapage : une seule seconde tentative, uniquement si le volume est
+        # en cause. On repasse au modèle sa propre copie et on lui demande de la
+        # reprendre — le reste des paramètres (structure, canonical, marqueur)
+        # est déjà dans le prompt initial.
+        wc = word_count(html)
+        if errors and not args.mock and not MIN_WORDS <= wc <= MAX_WORDS:
+            if wc < MIN_WORDS:
+                correction = (
+                    f"Tu as généré {wc} mots, il en faut au moins {PROMPT_MIN_WORDS}. "
+                    "Réécris l'article en développant chaque section (exemples "
+                    "concrets, contexte local, nuances).")
+            else:
+                correction = (
+                    f"Tu as généré {wc} mots, c'est trop : il en faut au plus "
+                    f"{PROMPT_MAX_WORDS}. Réécris l'article en resserrant chaque "
+                    "section, sans supprimer de rubrique.")
+            correction += (
+                " Ne change ni la structure HTML, ni les paramètres obligatoires "
+                "(canonical, slug, dates, marqueur, FAQ). Renvoie UNIQUEMENT le "
+                "fichier HTML complet.")
+            log(f"Volume hors bornes ({wc} mots) — seconde et dernière tentative.")
+            retry_raw = generate_html(cfg, system, user, followup=[
+                {"role": "assistant", "content": raw},
+                {"role": "user", "content": correction},
+            ])
+            if retry_raw:
+                html = clean_output(retry_raw)
+                errors = validate(html, cfg, topic)
+                log(f"Seconde tentative : {word_count(html)} mots, "
+                    f"{len(errors)} erreur(s) de validation.")
+            else:
+                fail("Réponse vide à la seconde tentative.")
+
         if errors:
             fail("Article rejeté par la validation — aucun fichier écrit :")
             for err in errors:
