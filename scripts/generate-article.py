@@ -676,7 +676,7 @@ def build_main(parts: dict, cfg: dict, data: dict, today: dict) -> str:
 
   <section class="article">
     <div class="article-wrap">
-      <p class="article-meta">Publié le {today['fr']} · Distributeurs · Lecture {reading} min</p>
+      <p class="article-meta">Publié le {today['fr']} · {esc(cfg['default_article_section'])} · Lecture {reading} min</p>
 
       <p class="article-lead">{inline(data['lede'])}</p>
 
