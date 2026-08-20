@@ -34,6 +34,11 @@
   "og_image": "/images/photohero.jpeg",
   "logo_path": "/images/logo-dark.jpeg",
   "default_article_section": "Distributeurs",
+  "internal_link_targets": [
+    "/#distributeurs",
+    "/#carte",
+    "/#faq"
+  ],
   "reference_article_slug": "pizza-nuit-tarbes-distributeur-24h",
   "facts": [
     "Distributeurs : Tarbes (15bis Bd du Général de Lattre de Tassigny), Séméac (111 Av. des Sports), Orleix (11 Route de Rabastens), Horgues (21 Rue du Pic du Midi), Adé (3 Av. des Pyrénées), Lourdes (4 Rue Lucien Pourxet).",

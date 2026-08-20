@@ -103,13 +103,23 @@ que le choix du sujet, la validation et les mises à jour de fichiers fonctionne
    HTML : `lede` + sections, FAQ exclue. Plus de balises ni de boilerplate dans
    le total.
 
-   *Rattrapage :* dès que le corps passe **sous la cible de 1200 mots** — même si
-   la validation passerait — le script relance **un unique** appel avec un prompt
-   correctif. Il garde ensuite **la meilleure des deux copies** : une version
-   valide prime sur une version invalide, puis la plus proche de la cible, et
-   chaque reprise repart de la meilleure copie obtenue. Plafond strict :
-   **3 appels** (`MAX_CALLS`) — le modèle rend ~600 mots en première passe et
-   gagne 60 à 75 % par reprise, deux appels plafonnent vers 1000-1100.
+   *Rattrapage :* le script relance un appel avec un prompt correctif dès que le
+   corps passe **sous la cible de 1200 mots** — même si la validation passerait —
+   **ou** qu'une erreur de validation que le modèle peut corriger subsiste
+   (maillage interne absent, nombre de questions, longueur du `title`). Le message
+   de reprise est construit à partir des erreurs réellement relevées
+   (`build_correction()`). Il garde ensuite **la meilleure des copies** : celle qui
+   a le moins d'erreurs, puis la plus proche de la cible de volume, et chaque
+   reprise repart de la meilleure copie obtenue. Plafond strict : **3 appels**
+   (`MAX_CALLS`) — le modèle rend ~600 mots en première passe et gagne 60 à 75 %
+   par reprise, deux appels plafonnent vers 1000-1100.
+
+   Le maillage interne est le point sur lequel le modèle achoppe le plus : la
+   consigne liste les chemins un par un et montre la forme attendue. Les cibles
+   viennent de `internal_link_targets` dans `blog-config.json` — elles servent à la
+   fois au prompt, à la validation et au message de reprise, et sont tenues courtes
+   (trois cibles) : six ancres noyées dans une phrase donnaient un article au bon
+   volume mais sans un seul lien.
 8. **Assemble la page** : `<head>` repris du gabarit avec seulement les champs
    propres à l'article remplacés (title, description, canonical, OG, Twitter,
    dates), les trois blocs JSON-LD sérialisés depuis le contenu, le marqueur

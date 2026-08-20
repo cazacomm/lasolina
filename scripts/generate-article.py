@@ -166,7 +166,7 @@ def load_config() -> dict:
         raise FileNotFoundError(f"Configuration introuvable : {CONFIG_PATH}")
     cfg = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     for key in ("site_name", "site_url", "sector", "location", "author",
-                "logo_path", "default_article_section"):
+                "logo_path", "default_article_section", "internal_link_targets"):
         if not cfg.get(key):
             raise ValueError(f"Clé manquante ou vide dans blog-config.json : {key}")
     cfg["site_url"] = cfg["site_url"].rstrip("/")
@@ -264,16 +264,55 @@ def load_reference_article(cfg: dict, slugs: set[str]) -> tuple[str, str]:
 # ─────────────────────────────────────────────────────────────
 
 def volume_rank(errors: list[str], wc: int) -> tuple[int, int]:
-    """Clé de comparaison entre deux copies : une version valide prime toujours,
-    puis on préfère celle qui approche le mieux la cible."""
+    """Clé de comparaison entre deux copies : celle qui a le moins d'erreurs
+    prime, puis on préfère celle qui approche le mieux la cible. Compter les
+    erreurs plutôt que leur seule présence départage deux copies invalides."""
     deficit = max(0, PROMPT_MIN_WORDS - wc)
     excess = max(0, wc - MAX_WORDS)
-    return (1 if errors else 0, deficit + excess)
+    return (len(errors), deficit + excess)
+
+
+def build_correction(cfg: dict, errors: list[str], wc: int) -> str:
+    """Message de reprise adressé au modèle. Il ne porte plus seulement sur le
+    volume : toute erreur de validation que le modèle peut corriger lui-même
+    (maillage interne, nombre de questions, longueur du title) y passe, tant
+    qu'il reste des appels au budget."""
+    demands = []
+    if wc < PROMPT_MIN_WORDS:
+        demands.append(
+            f"Tu as généré {wc} mots pour le corps (FAQ exclue), il en faut au moins "
+            f"{PROMPT_MIN_WORDS}. Développe chaque section : ajoute des paragraphes, "
+            "des exemples concrets, du contexte local, des nuances. Ne retire aucune "
+            "section.")
+    elif wc > MAX_WORDS:
+        demands.append(
+            f"Tu as généré {wc} mots pour le corps (FAQ exclue), c'est trop : il en "
+            f"faut au plus {PROMPT_MAX_WORDS}. Resserre chaque section sans en "
+            "supprimer aucune.")
+
+    if any("maillage" in e for e in errors):
+        targets = "\n".join(f"  {t}" for t in cfg["internal_link_targets"])
+        demands.append(
+            "Il manque des liens internes, c'est rédhibitoire. Insère dans le corps "
+            "au moins DEUX liens markdown vers ces chemins exacts, placés dans deux "
+            f"sections différentes :\n{targets}\net au moins UN lien vers /blog/. "
+            f"Écris-les sous la forme [libellé descriptif]({cfg['internal_link_targets'][0]}), "
+            "en recopiant le chemin tel quel. Ne touche à rien d'autre.")
+
+    others = [e for e in errors if "maillage" not in e and "volume" not in e]
+    if others:
+        demands.append("Corrige aussi ces points : " + " ; ".join(others) + ".")
+
+    if not demands:
+        demands.append("Reprends ton JSON en respectant toutes les consignes.")
+    return " ".join(demands) + " Réponds par le seul objet JSON complet."
 
 
 def build_prompt(cfg: dict, topic: dict, rules: str) -> tuple[str, str]:
     """Prompt court : plus de gabarit HTML à recopier, plus de contraintes de
     balisage. Le modèle écrit, le script fabrique la page."""
+    targets = cfg["internal_link_targets"]
+    targets_bullets = "\n".join(f"    {t}" for t in targets)
 
     system = f"""Tu es rédacteur SEO/GEO senior pour une entreprise locale française.
 Tu écris du CONTENU, jamais du HTML : la mise en page est faite par ailleurs.
@@ -310,8 +349,13 @@ RÈGLES DE CONTENU
   Elles ne comptent pas dans le volume du corps.
 - Balisage inline autorisé dans les textes, et lui seul :
   **gras** et [libellé](/chemin). Les liens sont forcément internes.
-- Maillage : place au moins deux liens vers /#distributeurs, /#carte ou /#faq,
-  et un lien vers /blog/, répartis dans le corps.
+- Maillage interne — OBLIGATOIRE, la réponse est rejetée sans cela :
+  place AU MOINS DEUX liens markdown vers ces chemins exacts, dans deux
+  sections différentes du corps :
+{targets_bullets}
+  et AU MOINS UN lien vers /blog/.
+  Forme attendue, à recopier telle quelle : [libellé descriptif]({targets[0]})
+  Recopie les chemins sans les modifier, sans domaine et sans rien y ajouter.
 - Ancres de liens : les libellés des liens internes doivent être descriptifs et
   se lire naturellement dans la phrase. Interdit : les libellés secs d'un seul
   mot comme « ici », « blog », « carte », « contact ».
@@ -489,9 +533,10 @@ def validate_content(data: dict, cfg: dict) -> list[str]:
          if isinstance(s, dict)
          for b in (s.get("content") or []) if isinstance(b, dict)])
     links = re.findall(r"\[[^\]]+\]\((/[^)\s]*)\)", body)
-    if sum(1 for h in links if h in ("/#distributeurs", "/#carte", "/#faq")) < 2:
+    targets = cfg["internal_link_targets"]
+    if sum(1 for h in links if h in targets) < 2:
         errors.append("maillage interne : moins de deux liens vers "
-                      "/#distributeurs, /#carte ou /#faq")
+                      + " ou ".join(targets))
     if not any(h.startswith("/blog") for h in links):
         errors.append("maillage interne : aucun lien vers /blog/")
 
@@ -1002,28 +1047,20 @@ def main() -> int:
         errors = validate_content(data, cfg)
         wc = content_word_count(data)
 
-        # Rattrapage : on relance tant que le volume est hors cible, dans la
+        # Rattrapage : on relance tant qu'il reste une erreur que le modèle peut
+        # corriger — volume hors cible, maillage absent, etc. —, dans la
         # limite de MAX_CALLS appels au total. Chaque reprise repart de la
         # MEILLEURE copie obtenue jusque-là, pas de la dernière : le modèle
         # développe alors un texte déjà long au lieu de repartir d'un plus court.
         calls = 1
         while (not args.mock and calls < MAX_CALLS
-               and not PROMPT_MIN_WORDS <= wc <= MAX_WORDS):
-            if wc < PROMPT_MIN_WORDS:
-                correction = (
-                    f"Tu as généré {wc} mots pour le corps (FAQ exclue), il en faut au "
-                    f"moins {PROMPT_MIN_WORDS}. Reprends ton JSON et développe chaque "
-                    "section : ajoute des paragraphes, des exemples concrets, du "
-                    "contexte local, des nuances. Ne retire aucune section.")
-            else:
-                correction = (
-                    f"Tu as généré {wc} mots pour le corps (FAQ exclue), c'est trop : "
-                    f"il en faut au plus {PROMPT_MAX_WORDS}. Resserre chaque section "
-                    "sans en supprimer aucune.")
-            correction += " Réponds par le seul objet JSON complet."
+               and (errors or not PROMPT_MIN_WORDS <= wc <= MAX_WORDS)):
+            correction = build_correction(cfg, errors, wc)
             calls += 1
-            log(f"Volume hors cible ({wc} mots, cible {PROMPT_MIN_WORDS}) — "
-                f"tentative {calls}/{MAX_CALLS}.")
+            reason = (f"{wc} mots, cible {PROMPT_MIN_WORDS}"
+                      if not PROMPT_MIN_WORDS <= wc <= MAX_WORDS
+                      else f"{len(errors)} erreur(s) de validation")
+            log(f"Copie à reprendre ({reason}) — tentative {calls}/{MAX_CALLS}.")
             try:
                 retry = generate_content(cfg, system, user, followup=[
                     {"role": "assistant", "content": json.dumps(data, ensure_ascii=False)},
