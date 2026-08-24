@@ -6,12 +6,21 @@
     <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
     <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
     <language>fr-FR</language>
-    <lastBuildDate>Wed, 19 Aug 2026 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 24 Aug 2026 09:00:00 +0200</lastBuildDate>
     <image>
       <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
       <title>Le blog La Solina</title>
       <link>https://www.lasolinapizza.fr/blog/</link>
     </image>
+
+    <item>
+      <title>Guide des distributeurs de pizzas autour de Tarbes</title>
+      <link>https://www.lasolinapizza.fr/blog/semeac-orleix-horgues-guide-distributeurs-couronne-tarbaise/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/semeac-orleix-horgues-guide-distributeurs-couronne-tarbaise/</guid>
+      <pubDate>Mon, 24 Aug 2026 09:00:00 +0200</pubDate>
+      <category>Blog</category>
+      <description>Autour de Tarbes, les communes de Séméac, Orleix et Horgues bénéficient du service pratique des distributeurs automatiques de pizzas artisanales de La Solina. Disponibles à toute heure, ces distributeurs offrent des pizzas préparées à la main chaque matin avec une pâte maison et des produits frais. Que vous soyez en quête d'un repas rapide ou d'une gourmandise nocturne, découvrez comment ces points de distribution facilitent votre quotidien.</description>
+    </item>
 
     <item>
       <title>Le secret d'une pâte maison réussie</title>
