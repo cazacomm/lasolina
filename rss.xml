@@ -6,12 +6,21 @@
     <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
     <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
     <language>fr-FR</language>
-    <lastBuildDate>Mon, 24 Aug 2026 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 31 Aug 2026 09:00:00 +0200</lastBuildDate>
     <image>
       <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
       <title>Le blog La Solina</title>
       <link>https://www.lasolinapizza.fr/blog/</link>
     </image>
+
+    <item>
+      <title>Savourez une pizza artisanale à Lourdes et Adé</title>
+      <link>https://www.lasolinapizza.fr/blog/lourdes-ade-manger-pizza-artisanale-hors-sentiers/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/lourdes-ade-manger-pizza-artisanale-hors-sentiers/</guid>
+      <pubDate>Mon, 31 Aug 2026 09:00:00 +0200</pubDate>
+      <category>Blog</category>
+      <description>Dans les Hautes-Pyrénées, les amateurs de pizza artisanale peuvent se régaler à Lourdes et Adé. Ces localités, souvent associées aux flux touristiques, offrent pourtant des coins paisibles pour savourer une délicieuse pizza préparée à la main. Les distributeurs automatiques de La Solina, disponibles 24h/24, garantissent une expérience culinaire authentique, loin de l'agitation. Que vous soyez résident ou de passage, découvrez comment déguster une pizza de qualité, à tout moment de la journée.</description>
+    </item>
 
     <item>
       <title>Guide des distributeurs de pizzas autour de Tarbes</title>
