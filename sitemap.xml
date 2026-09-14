@@ -9,7 +9,7 @@
   </url>
   <url>
     <loc>https://www.lasolinapizza.fr/blog/</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -58,6 +58,12 @@
   <url>
     <loc>https://www.lasolinapizza.fr/blog/soiree-match-soiree-jeux-soiree-film-organiser/</loc>
     <lastmod>2026-09-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.lasolinapizza.fr/blog/pourquoi-distributeurs-n-acceptent-especes/</loc>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

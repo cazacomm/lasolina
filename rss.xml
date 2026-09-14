@@ -6,12 +6,21 @@
     <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
     <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
     <language>fr-FR</language>
-    <lastBuildDate>Mon, 07 Sep 2026 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 14 Sep 2026 09:00:00 +0200</lastBuildDate>
     <image>
       <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
       <title>Le blog La Solina</title>
       <link>https://www.lasolinapizza.fr/blog/</link>
     </image>
+
+    <item>
+      <title>Nos distributeurs : un choix sans espèces</title>
+      <link>https://www.lasolinapizza.fr/blog/pourquoi-distributeurs-n-acceptent-especes/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/pourquoi-distributeurs-n-acceptent-especes/</guid>
+      <pubDate>Mon, 14 Sep 2026 09:00:00 +0200</pubDate>
+      <category>Blog</category>
+      <description>À Tarbes et dans les Hautes-Pyrénées, nos distributeurs automatiques de pizzas artisanales attirent de nombreux gourmands. Mais pourquoi n'acceptent-ils pas les espèces ? Cette question revient souvent, et nous souhaitons y répondre de manière transparente. Le choix du paiement numérique assure une expérience plus sûre et plus pratique pour vous, tout en facilitant la gestion de nos distributeurs.</description>
+    </item>
 
     <item>
       <title>Réussir votre dîner pizza pour une soirée parfaite</title>
