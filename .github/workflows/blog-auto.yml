@@ -65,7 +65,7 @@ jobs:
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           case $code in
             0)  echo "Article généré." ;;
-            78) echo "::notice::Aucun nouveau sujet à traiter — arrêt propre." ;;
+            78) echo "::notice::Aucun sujet a traiter et reapprovisionnement impossible — arret propre." ;;
             *)  echo "::error::Échec de la génération (code $code)." ; exit $code ;;
           esac
 
@@ -98,5 +98,5 @@ jobs:
             echo "- Simulation : \`${{ inputs.dry_run || 'false' }}\`"
             echo "- Réécriture : \`${{ inputs.rewrite || '(aucune)' }}\`"
             echo ""
-            echo "Codes : \`0\` succès · \`78\` aucun sujet restant · \`1\` erreur."
+            echo "Codes : \`0\` succès · \`78\` aucun sujet et réserve non réapprovisionnable · \`1\` erreur."
           } >> "$GITHUB_STEP_SUMMARY"

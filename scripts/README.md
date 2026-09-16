@@ -41,7 +41,7 @@ que le choix du sujet, la validation et les mises à jour de fichiers fonctionne
 | Code | Signification | Effet sur le workflow |
 |---|---|---|
 | `0` | Article généré et validé | commit + push |
-| `78` | Aucun sujet restant dans `BLOG_WORKFLOW.md` | arrêt propre, pas de commit |
+| `78` | Aucun sujet restant **et** réapprovisionnement en échec | arrêt propre, pas de commit |
 | `1` | Erreur (API, validation, fichier manquant) | échec visible, **aucun fichier écrit** |
 
 ## 4. Ce que fait le script
@@ -57,16 +57,17 @@ que le choix du sujet, la validation et les mises à jour de fichiers fonctionne
    Les clés obligatoires sont contrôlées au démarrage : il vaut mieux échouer
    tout de suite avec un message clair que publier un JSON-LD portant le logo
    d'un autre site.
-2. Extrait de `BLOG_WORKFLOW.md` les 12 sujets suggérés **et** les règles éditoriales,
+2. Extrait de `BLOG_WORKFLOW.md` les sujets suggérés **et** les règles éditoriales,
    qui sont injectées telles quelles dans le prompt.
 3. Scanne `/blog/*/index.html` : un article généré porte un marqueur
    `<!-- lasolina-topic: N -->` juste après `<body>`. Un sujet marqué n'est jamais repris.
-4. Choisit le premier sujet non traité, dans l'ordre de la liste.
-5. **Relit l'article de référence** (`blog/pizza-nuit-tarbes-distributeur-24h/index.html`)
+4. **Réapprovisionne la réserve si elle est basse** — voir la section 7.
+5. Choisit le premier sujet non traité, dans l'ordre de la liste.
+6. **Relit l'article de référence** (`blog/pizza-nuit-tarbes-distributeur-24h/index.html`)
    et s'en sert de gabarit. Aucun template HTML n'est dupliqué dans le script :
    header, footer, favicons, polices, feuille de style et bloc CTA en sont extraits
    à chaque exécution, donc si le gabarit évolue les articles suivants suivent.
-6. Appelle OpenAI (`gpt-4o`, `temperature` 0.7, `max_tokens` 9000, réponse forcée
+7. Appelle OpenAI (`gpt-4o`, `temperature` 0.7, `max_tokens` 9000, réponse forcée
    en `json_object`) et lui demande **uniquement le contenu éditorial** :
 
    ```json
@@ -86,7 +87,7 @@ que le choix du sujet, la validation et les mises à jour de fichiers fonctionne
    Les liens sont restreints aux chemins internes, un lien externe est donc
    structurellement impossible. Tout le reste est échappé — le modèle ne peut pas
    injecter de HTML.
-7. **Valide le contenu** avant toute écriture : champs présents, longueur du
+8. **Valide le contenu** avant toute écriture : champs présents, longueur du
    `title` (40–70) et de la `meta_description` (< 155), types de blocs connus,
    exactement 5 questions de FAQ, maillage interne (≥ 2 liens vers
    `/#distributeurs`, `/#carte` ou `/#faq` et ≥ 1 vers `/blog/`), volume entre
@@ -120,12 +121,12 @@ que le choix du sujet, la validation et les mises à jour de fichiers fonctionne
    fois au prompt, à la validation et au message de reprise, et sont tenues courtes
    (trois cibles) : six ancres noyées dans une phrase donnaient un article au bon
    volume mais sans un seul lien.
-8. **Assemble la page** : `<head>` repris du gabarit avec seulement les champs
+9. **Assemble la page** : `<head>` repris du gabarit avec seulement les champs
    propres à l'article remplacés (title, description, canonical, OG, Twitter,
    dates), les trois blocs JSON-LD sérialisés depuis le contenu, le marqueur
    d'idempotence inséré après `<body>`, le `<main>` construit de toutes pièces,
    header et footer repris tels quels.
-9. Écrit `blog/<slug>/index.html`, puis met à jour `blog/index.html` (carte + JSON-LD),
+10. Écrit `blog/<slug>/index.html`, puis met à jour `blog/index.html` (carte + JSON-LD),
    `sitemap.xml`, `rss.xml` et `llms.txt`.
 
 ## 4 bis. Réécrire un article existant
@@ -165,16 +166,45 @@ la relecture humaine.
 Pour vérifier la consommation réelle : les logs du workflow affichent le décompte exact
 des tokens de chaque exécution (`[blog] Tokens : … entrée + … sortie = …`).
 
-## 7. Ajouter des sujets
+## 7. La réserve de sujets se remplit toute seule
 
-La réserve de sujets est la section **« Douze sujets d'articles suggérés »** de
-[`BLOG_WORKFLOW.md`](../BLOG_WORKFLOW.md). Quand elle est épuisée, le workflow sort en
-code 78 chaque lundi sans rien casser. Il suffit d'ajouter des lignes numérotées au même
-format pour relancer la machine :
+La réserve de sujets est la section **« Sujets d'articles suggérés »** de
+[`BLOG_WORKFLOW.md`](../BLOG_WORKFLOW.md). Elle n'a plus besoin d'être alimentée à la
+main : au démarrage, le script compte les sujets non traités et, **s'il en reste moins
+de 8** (`TOPIC_RESERVE_MIN`), il demande à `gpt-4o` **20 sujets neufs**
+(`TOPIC_BATCH`), les ajoute à la fin du tableau en numérotation continue, puis
+**commite ce seul fichier avant de générer l'article du jour**. Le code 78 ne
+survient donc plus que si cet appel échoue *et* qu'aucun sujet n'attend.
+
+Le prompt reçoit le secteur, la localité et les `geo_keywords` du site, ainsi que la
+**liste des titres déjà présents**, avec consigne de ne pas les répéter. Au retour, le
+script se méfie quand même du modèle :
+
+- **la déduplication se juge sur le slug**, pas sur le titre. Le slug est la clé
+  d'idempotence de tout le pipeline (`blog/<slug>/index.html`) : deux titres
+  différents qui produisent le même slug produiraient le même dossier. Sont écartés
+  les slugs des articles en ligne, ceux des sujets déjà listés et les répétitions
+  internes au lot ;
+- **le texte est nettoyé** avant écriture (`clean_line()`) : `**`, backticks, `✅` et
+  retours à la ligne sont retirés, sinon un titre mal formé casserait le tableau et
+  donc `parse_topics()` au run suivant ;
+- **un second appel** complète le lot si la déduplication en a écarté trop
+  (`TOPIC_MAX_CALLS = 2`). Au-delà, le script se contente de ce qu'il a plutôt que de
+  boucler sur un modèle qui se répète.
+
+Les sujets générés suivent exactement le format des sujets écrits à la main — le slug
+n'est pas écrit dans le fichier, il est déduit du titre par `slugify()`, comme pour
+tous les autres :
 
 ```markdown
 13. **Titre du sujet** — angle, intention de recherche visée.
 ```
+
+Rien n'empêche d'en ajouter à la main : c'est le même fichier, le même format, et un
+sujet écrit par un humain passe avant les sujets générés s'il porte un numéro plus bas.
+
+En `--dry-run`, le script annonce ce qu'il générerait mais **n'appelle rien et n'écrit
+rien**. En `--mock`, les sujets sont fabriqués localement, sans appel API.
 
 ## 8. Relecture
 
