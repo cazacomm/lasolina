@@ -171,10 +171,13 @@ des tokens de chaque exécution (`[blog] Tokens : … entrée + … sortie = …
 La réserve de sujets est la section **« Sujets d'articles suggérés »** de
 [`BLOG_WORKFLOW.md`](../BLOG_WORKFLOW.md). Elle n'a plus besoin d'être alimentée à la
 main : au démarrage, le script compte les sujets non traités et, **s'il en reste moins
-de 8** (`TOPIC_RESERVE_MIN`), il demande à `gpt-4o` **20 sujets neufs**
+de 8** (`TOPIC_RESERVE_MIN`), il demande à `gpt-4o` **40 sujets neufs**
 (`TOPIC_BATCH`), les ajoute à la fin du tableau en numérotation continue, puis
 **commite ce seul fichier avant de générer l'article du jour**. Le code 78 ne
 survient donc plus que si cet appel échoue *et* qu'aucun sujet n'attend.
+
+Le lot est volontairement large : à raison d'un article par semaine, 40 sujets tiennent
+**environ neuf mois**. Mieux vaut un gros appel tous les neuf mois que dix petits.
 
 Le prompt reçoit le secteur, la localité et les `geo_keywords` du site, ainsi que la
 **liste des titres déjà présents**, avec consigne de ne pas les répéter. Au retour, le
@@ -205,6 +208,25 @@ sujet écrit par un humain passe avant les sujets générés s'il porte un numé
 
 En `--dry-run`, le script annonce ce qu'il générerait mais **n'appelle rien et n'écrit
 rien**. En `--mock`, les sujets sont fabriqués localement, sans appel API.
+
+### Pourquoi la CI le fait en deux temps
+
+Le workflow lance d'abord `--topics-only`, **pousse le commit des sujets**, et seulement
+ensuite génère l'article :
+
+```bash
+python scripts/generate-article.py --topics-only   # réapprovisionne, puis s'arrête
+```
+
+Les sujets sont payés à l'appel. S'ils n'étaient commités qu'en fin de run, un article
+qui échoue derrière (API, validation) ferait échouer le job, l'étape de push serait
+sautée et le commit disparaîtrait avec le runner : on aurait payé la génération pour
+rien, et le run suivant la repaierait. En les poussant tout de suite, un échec d'article
+ne coûte plus que l'article.
+
+Si `--topics-only` échoue, le workflow le signale en `warning` et **continue** avec la
+réserve existante. Un run lancé à la main sans `--topics-only` réapprovisionne toujours
+en cours de route, comme avant : la commande reste autonome.
 
 ## 8. Relecture
 

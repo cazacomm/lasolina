@@ -45,6 +45,37 @@ jobs:
           python -m pip install --upgrade pip
           pip install openai
 
+      - name: Identité git
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # Étape distincte, avant l'article : les sujets sont poussés dès qu'ils
+      # sont générés. Un article qui échoue ensuite ne les fait plus perdre.
+      - name: Réapprovisionnement de la réserve de sujets
+        id: topics
+        if: inputs.dry_run != true && inputs.rewrite == ''
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          set +e
+          python scripts/generate-article.py --topics-only
+          code=$?
+          set -e
+          if [ $code -ne 0 ]; then
+            echo "::warning::Réapprovisionnement des sujets en échec (code $code) — on continue avec la réserve existante."
+          fi
+
+      - name: Push des nouveaux sujets
+        if: steps.topics.outcome == 'success' || steps.topics.outcome == 'failure'
+        run: |
+          if [ -z "$(git log origin/${GITHUB_REF_NAME}..HEAD --oneline)" ]; then
+            echo "::notice::Aucun sujet ajouté — rien à pousser."
+            exit 0
+          fi
+          git push origin HEAD:${GITHUB_REF_NAME}
+          echo "::notice::Nouveaux sujets poussés avant la génération de l'article."
+
       - name: Génération de l'article
         id: generate
         env:
@@ -76,8 +107,6 @@ jobs:
             echo "::notice::Aucune modification à committer."
             exit 0
           fi
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if [ -n "${{ inputs.rewrite }}" ]; then
             msg="chore(blog): reecriture de ${{ inputs.rewrite }}"

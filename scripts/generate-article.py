@@ -33,6 +33,11 @@ Options :
   --dry-run       n'écrit aucun fichier, affiche le résultat
   --mock          n'appelle pas l'API (contenu de démonstration)
   --rewrite SLUG  régénère un article existant et écrase son fichier
+  --topics-only   réapprovisionne la réserve de sujets puis s'arrête
+
+Le mode --topics-only existe pour la CI : elle l'exécute d'abord et pousse le
+commit des sujets dans la foulée, avant de lancer la génération de l'article.
+Un article qui échoue ne fait ainsi jamais perdre les sujets déjà payés.
 """
 
 from __future__ import annotations
@@ -74,10 +79,12 @@ MAX_CALLS = 3
 # Réserve de sujets. Sous TOPIC_RESERVE_MIN sujets non traités dans
 # BLOG_WORKFLOW.md, le script demande TOPIC_BATCH sujets neufs au modèle et les
 # ajoute au tableau avant de publier : la file ne se vide donc jamais toute
-# seule. TOPIC_MAX_CALLS borne la dépense — un second appel ne sert qu'à
-# compléter le lot si les doublons en ont écarté trop.
+# seule. Le lot est large à dessein — à raison d'un article par semaine, 40
+# sujets tiennent environ neuf mois, ce qui espace d'autant les appels de
+# réapprovisionnement. TOPIC_MAX_CALLS borne la dépense : un second appel ne
+# sert qu'à compléter le lot si les doublons en ont écarté trop.
 TOPIC_RESERVE_MIN = 8
-TOPIC_BATCH = 20
+TOPIC_BATCH = 40
 TOPIC_MAX_CALLS = 2
 TOPICS_MODEL = "gpt-4o"
 
@@ -1231,7 +1238,14 @@ def main() -> int:
                         help="n'appelle pas l'API OpenAI (contenu de démonstration)")
     parser.add_argument("--rewrite", metavar="SLUG",
                         help="réécrit un article existant et écrase son fichier")
+    parser.add_argument("--topics-only", action="store_true",
+                        help="réapprovisionne la réserve de sujets puis s'arrête, "
+                             "sans générer d'article")
     args = parser.parse_args()
+
+    if args.topics_only and args.rewrite:
+        fail("--topics-only et --rewrite ne vont pas ensemble.")
+        return EXIT_ERROR
 
     if args.dry_run:
         log("Mode DRY-RUN : aucun fichier ne sera écrit.")
@@ -1275,6 +1289,10 @@ def main() -> int:
                 return EXIT_ERROR
             topic["slug"] = args.rewrite
             log(f"Mode RÉÉCRITURE : sujet n°{num} — {topic['title']}")
+        elif args.topics_only:
+            replenish_topics(cfg, topics, done, slugs, args)
+            log("Mode --topics-only : réserve traitée, aucun article généré.")
+            return EXIT_OK
         else:
             topics = replenish_topics(cfg, topics, done, slugs, args)
             topic = pick_topic(topics, done, slugs)
