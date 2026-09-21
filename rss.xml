@@ -6,12 +6,21 @@
     <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
     <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
     <language>fr-FR</language>
-    <lastBuildDate>Mon, 14 Sep 2026 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 21 Sep 2026 09:00:00 +0200</lastBuildDate>
     <image>
       <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
       <title>Le blog La Solina</title>
       <link>https://www.lasolinapizza.fr/blog/</link>
     </image>
+
+    <item>
+      <title>Comprendre et gérer le message "Indisponible"</title>
+      <link>https://www.lasolinapizza.fr/blog/indisponible-ecran-ca-veut-dire-faire/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/indisponible-ecran-ca-veut-dire-faire/</guid>
+      <pubDate>Mon, 21 Sep 2026 09:00:00 +0200</pubDate>
+      <category>Blog</category>
+      <description>Vous vous rendez à un distributeur automatique de La Solina pour savourer une délicieuse pizza artisanale, mais l'écran indique "Indisponible". Ne vous inquiétez pas, ce message est généralement temporaire et signifie que nous travaillons à réapprovisionner le distributeur avec nos produits frais. Dans cet article, nous vous expliquons les raisons possibles de ce message et les solutions à envisager pour satisfaire votre envie de pizza.</description>
+    </item>
 
     <item>
       <title>Nos distributeurs : un choix sans espèces</title>
