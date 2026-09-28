@@ -6,12 +6,21 @@
     <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
     <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
     <language>fr-FR</language>
-    <lastBuildDate>Mon, 21 Sep 2026 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 28 Sep 2026 09:00:00 +0200</lastBuildDate>
     <image>
       <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
       <title>Le blog La Solina</title>
       <link>https://www.lasolinapizza.fr/blog/</link>
     </image>
+
+    <item>
+      <title>Découvrez nos pizzas halal et végétariennes</title>
+      <link>https://www.lasolinapizza.fr/blog/halal-vegetarien-viande-s-retrouver-carte/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/halal-vegetarien-viande-s-retrouver-carte/</guid>
+      <pubDate>Mon, 28 Sep 2026 09:00:00 +0200</pubDate>
+      <category>Blog</category>
+      <description>À Tarbes et dans les environs, trouver une pizza adaptée à vos préférences alimentaires peut être un défi. Que vous cherchiez des options halal, végétariennes ou tout simplement sans viande, notre carte de pizzas artisanales vous propose des solutions savoureuses et accessibles à toute heure, grâce à nos distributeurs automatiques situés dans le bassin tarbais.</description>
+    </item>
 
     <item>
       <title>Comprendre et gérer le message "Indisponible"</title>

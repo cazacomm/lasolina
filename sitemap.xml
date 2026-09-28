@@ -9,7 +9,7 @@
   </url>
   <url>
     <loc>https://www.lasolinapizza.fr/blog/</loc>
-    <lastmod>2026-09-21</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -70,6 +70,12 @@
   <url>
     <loc>https://www.lasolinapizza.fr/blog/indisponible-ecran-ca-veut-dire-faire/</loc>
     <lastmod>2026-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.lasolinapizza.fr/blog/halal-vegetarien-viande-s-retrouver-carte/</loc>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
