@@ -434,6 +434,7 @@ nav a:hover{opacity:1}
       <div id="map" role="region" aria-label="Carte des distributeurs"></div>
       <div class="map-legend">
         <span class="badge">• Tarbes : 15bis Bd du Général de Lattre de Tassigny, 65000</span>
+        <span class="badge">• Tarbes : 155 Avenue Alsace Lorraine, 65000</span>
         <span class="badge">• Séméac : 111 Av. des Sports, 65600</span>
         <span class="badge">• Orleix : 11 Route de Rabastens, 65800</span>
         <span class="badge">• Horgues : 21 Rue du Pic du Midi, 65310</span>
@@ -667,6 +668,7 @@ nav a:hover{opacity:1}
 
   const addresses = [
     { name:'Tarbes : 15bis Bd du Général de Lattre de Tassigny', address:'15bis Bd du Général de Lattre de Tassigny, 65000 Tarbes, France' },
+    { name:'Tarbes : 155 Avenue Alsace Lorraine', address:'155 Avenue Alsace Lorraine, 65000 Tarbes, France', lat:43.2588597, lon:0.0717518 },
     { name:'Séméac : 111 Avenue des Sports', address:'111 Avenue des Sports, 65600 Séméac, France' },
     { name:'Orleix : 11 Route de Rabastens', address:'11 Route de Rabastens, 65800 Orleix, France' },
     { name:'Horgues : 21 Rue du Pic du Midi', address:'21 Rue du Pic du Midi, 65310 Horgues, France' },
@@ -705,7 +707,8 @@ nav a:hover{opacity:1}
     setRoute(best);
   }
 
-  Promise.all(addresses.map(a=>geocode(a.address))).then(results => {
+  // Coordonnées fixes si fournies (géocodage imprécis), sinon géocodage de l'adresse
+  Promise.all(addresses.map(a => a.lat != null ? [{lat:a.lat, lon:a.lon}] : geocode(a.address))).then(results => {
     const bounds = L.latLngBounds();
     results.forEach((res, i) => {
       if(!res || !res[0]) return;
