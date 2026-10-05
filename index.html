@@ -433,7 +433,7 @@ nav a:hover{opacity:1}
       </div>
       <div id="map" role="region" aria-label="Carte des distributeurs"></div>
       <div class="map-legend">
-        <span class="badge">• Tarbes : 15bis Bd du Général de Lattre de Tassigny, 65000</span>
+        <span class="badge">• Tarbes : 15bis Bd du Général de Lattre de Tassigny, 65000 (2 distributeurs de pizzas + 1 distributeur de tacos et paninis)</span>
         <span class="badge">• Tarbes : Av. Alsace-Lorraine, 65320</span>
         <span class="badge">• Séméac : 111 Av. des Sports, 65600</span>
         <span class="badge">• Orleix : 11 Route de Rabastens, 65800</span>
@@ -667,7 +667,7 @@ nav a:hover{opacity:1}
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'&copy; OpenStreetMap'}).addTo(map);
 
   const addresses = [
-    { name:'Tarbes : 15bis Bd du Général de Lattre de Tassigny', address:'15bis Bd du Général de Lattre de Tassigny, 65000 Tarbes, France' },
+    { name:'Tarbes : 15bis Bd du Général de Lattre de Tassigny', address:'15bis Bd du Général de Lattre de Tassigny, 65000 Tarbes, France', note:'2 distributeurs de pizzas + 1 distributeur de tacos et paninis' },
     { name:'Tarbes : Av. Alsace-Lorraine', address:'Av. Alsace-Lorraine, 65320 Tarbes, France', lat:43.2588597, lon:0.0717518 },
     { name:'Séméac : 111 Avenue des Sports', address:'111 Avenue des Sports, 65600 Séméac, France' },
     { name:'Orleix : 11 Route de Rabastens', address:'11 Route de Rabastens, 65800 Orleix, France' },
@@ -716,7 +716,7 @@ nav a:hover{opacity:1}
       const a = addresses[i];
       points.push({lat, lon, name:a.name});
       const m = L.marker([lat, lon]).addTo(map);
-      m.bindPopup(`<strong>${a.name}</strong><br>${a.address}<br><small>Cliquez pour définir l'itinéraire</small>`);
+      m.bindPopup(`<strong>${a.name}</strong><br>${a.address}<br>${a.note ? a.note + '<br>' : ''}<small>Cliquez pour définir l'itinéraire</small>`);
       m.on('click', () => {
         userPinned = true;   // l'utilisateur a choisi un point précis : on respecte son choix
         setRoute({lat, lon});

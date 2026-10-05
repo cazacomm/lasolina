@@ -77,7 +77,7 @@ Adresses des distributeurs (source unique de vérité : `index.html`, section `#
 
 | Commune | Adresse | CP |
 |---|---|---|
-| Tarbes | 15bis Bd du Général de Lattre de Tassigny | 65000 |
+| Tarbes | 15bis Bd du Général de Lattre de Tassigny (2 distributeurs de pizzas + 1 distributeur de tacos et paninis) | 65000 |
 | Tarbes | Av. Alsace-Lorraine | 65320 |
 | Séméac | 111 Av. des Sports | 65600 |
 | Orleix | 11 Route de Rabastens | 65800 |
