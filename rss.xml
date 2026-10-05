@@ -6,12 +6,21 @@
     <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
     <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
     <language>fr-FR</language>
-    <lastBuildDate>Mon, 28 Sep 2026 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 05 Oct 2026 09:00:00 +0200</lastBuildDate>
     <image>
       <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
       <title>Le blog La Solina</title>
       <link>https://www.lasolinapizza.fr/blog/</link>
     </image>
+
+    <item>
+      <title>Une journée chez La Solina : du pétrissage au distributeur</title>
+      <link>https://www.lasolinapizza.fr/blog/journee-solina-petrissage-distributeur/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/journee-solina-petrissage-distributeur/</guid>
+      <pubDate>Mon, 05 Oct 2026 09:00:00 +0200</pubDate>
+      <category>Blog</category>
+      <description>Plongez dans une journée typique à La Solina, à Tarbes, où les pizzas artisanales prennent vie. Découvrez comment chaque matin, nos experts préparent la pâte maison et sélectionnent des produits frais pour garantir une qualité exceptionnelle. De la préparation à la livraison dans nos distributeurs automatiques 24h/24, suivez le parcours savoureux de nos pizzas dans le bassin tarbais.</description>
+    </item>
 
     <item>
       <title>Découvrez nos pizzas halal et végétariennes</title>
