@@ -6,12 +6,21 @@
     <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
     <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
     <language>fr-FR</language>
-    <lastBuildDate>Mon, 05 Oct 2026 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 12 Oct 2026 09:00:00 +0200</lastBuildDate>
     <image>
       <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
       <title>Le blog La Solina</title>
       <link>https://www.lasolinapizza.fr/blog/</link>
     </image>
+
+    <item>
+      <title>Réchauffer une pizza : astuces infaillibles</title>
+      <link>https://www.lasolinapizza.fr/blog/rechauffer-pizza-rater-four-poele-air-fryer/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/rechauffer-pizza-rater-four-poele-air-fryer/</guid>
+      <pubDate>Mon, 12 Oct 2026 09:00:00 +0200</pubDate>
+      <category>Blog</category>
+      <description>Vous avez acheté une délicieuse pizza artisanale dans l'un des distributeurs automatiques de La Solina à Tarbes ou ailleurs dans les Hautes-Pyrénées, mais vous souhaitez la déguster plus tard ? Pas de souci ! Que vous soyez à Séméac, Orleix ou Lourdes, nous vous proposons des méthodes simples et efficaces pour réchauffer votre pizza sans la rater. Découvrez nos astuces pour que votre pizza maison retrouve tout son croustillant et son goût irrésistible.</description>
+    </item>
 
     <item>
       <title>Une journée chez La Solina : du pétrissage au distributeur</title>

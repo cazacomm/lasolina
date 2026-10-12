@@ -9,7 +9,7 @@
   </url>
   <url>
     <loc>https://www.lasolinapizza.fr/blog/</loc>
-    <lastmod>2026-10-05</lastmod>
+    <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -82,6 +82,12 @@
   <url>
     <loc>https://www.lasolinapizza.fr/blog/journee-solina-petrissage-distributeur/</loc>
     <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.lasolinapizza.fr/blog/rechauffer-pizza-rater-four-poele-air-fryer/</loc>
+    <lastmod>2026-10-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
