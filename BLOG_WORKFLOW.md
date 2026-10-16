@@ -53,7 +53,7 @@ Ne jamais renommer un slug déjà publié (cela casse les liens et l'indexation)
 ## 3. Règles éditoriales — à ne jamais enfreindre
 
 - **Aucune invention.** Pas de prix, de chiffres de fréquentation, de noms de clients, de dates de fondation, de labels ou de références réglementaires qui ne figurent pas déjà sur le site ou qui ne sont pas confirmés par La Solina.
-- Les seuls chiffres validés et réutilisables : **≈ 3 min 30** pour une pizza chaude, **≈ 30 s** pour une pizza froide, **6 distributeurs**, **24h/24 et 7j/7**.
+- Les seuls chiffres validés et réutilisables : **≈ 3 min 30** pour une pizza chaude, **≈ 30 s** pour une pizza froide, **24h/24 et 7j/7**.
 - Les prix sont maintenus **uniquement** dans la carte de `index.html`. Un article ne cite jamais de prix : il renvoie vers `/#carte`.
 - Pas de comparaison nominative avec un concurrent local.
 - Vocabulaire constant : « pizzas artisanales », « pâte maison », « produits frais », « préparées à la main le matin », « distributeur automatique ». Jamais « surgelé » ni « industriel » autrement que pour dire ce que La Solina ne fait pas.
@@ -84,6 +84,9 @@ Adresses des distributeurs (source unique de vérité : `index.html`, section `#
 | Horgues | 21 Rue du Pic du Midi | 65310 |
 | Adé | 3 Av. des Pyrénées | 65100 |
 | Lourdes | 4 Rue Lucien Pourxet | 65100 |
+| Ibos | 58 Av. du Pouey | 65420 |
+| Cieutat | 3 Pl. Saint-Barthélemy | 65200 |
+| Tournay | 2 Rue du Tanin | 65190 |
 
 > Point de vigilance : le site public affiche le **05 62 51 70 17**, tandis que les mentions légales affichent le **06 69 55 51 10**. Le blog et le `llms.txt` reprennent le numéro du site public. À trancher avec le client pour aligner les deux.
 

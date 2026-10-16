@@ -11,7 +11,7 @@ La Solina prépare ses pizzas à la main chaque matin — pâte maison, produits
 - **Adresse** : 15bis Bd du Général de Lattre de Tassigny, 65000 Tarbes, France
 - **Téléphone** : +33 5 62 51 70 17
 - **Site** : https://www.lasolinapizza.fr/
-- **Zone desservie** : Tarbes, Séméac, Orleix, Horgues, Adé, Lourdes, Aureilhan, Barbazan-Debat, Ibos — Hautes-Pyrénées (65)
+- **Zone desservie** : Tarbes, Séméac, Orleix, Horgues, Adé, Lourdes, Aureilhan, Barbazan-Debat, Ibos, Cieutat, Tournay — Hautes-Pyrénées (65)
 - **Disponibilité** : distributeurs accessibles 24h/24, 7j/7
 - **Paiement** : carte bancaire (sans contact), Apple Pay, Google Pay. Espèces non acceptées sur les distributeurs.
 
@@ -23,6 +23,9 @@ La Solina prépare ses pizzas à la main chaque matin — pâte maison, produits
 - Orleix — 11 Route de Rabastens, 65800
 - Horgues — 21 Rue du Pic du Midi, 65310
 - Lourdes — 4 Rue Lucien Pourxet, 65100
+- Ibos — 58 Av. du Pouey, 65420
+- Cieutat — 3 Pl. Saint-Barthélemy, 65200
+- Tournay — 2 Rue du Tanin, 65190
 
 ## Pages principales
 
