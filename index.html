@@ -388,6 +388,23 @@ nav a:hover{opacity:1}
 .faq-panel p{max-width:none;text-align:justify;font-family:var(--ff-body)}
 .faq-panel .answer{max-width:none;width:100%;margin-top:56px}
 .faq-panel div[style*="max-width:70ch"]{max-width:none !important}
+/* Message "clients gagnants" (hero) + pop-up réseaux sociaux */
+.hero-gagnant{margin:22px 0 0;max-width:46ch;font-family:var(--ff-card);font-size:14px;line-height:1.45;color:#0b1c27;background:rgba(255,255,255,.7);border:1px solid rgba(14,46,66,.15);border-radius:14px;padding:10px 14px}
+.hero-gagnant strong{color:var(--c-red)}
+.hero-gagnant a{color:var(--c-accent);font-weight:700}
+.social-pop{position:fixed;right:20px;bottom:20px;z-index:1500;width:min(340px,calc(100vw - 32px));background:var(--c-deep);color:#fff;border:1px solid rgba(227,243,255,.22);border-radius:var(--radius);box-shadow:0 18px 40px rgba(0,0,0,.35);padding:20px 20px 18px;font-family:var(--ff-card);opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
+.social-pop.show{opacity:1;transform:none;pointer-events:auto}
+.social-pop h2{font-family:var(--ff-title);font-size:24px;letter-spacing:.02em;margin:0 28px 8px 0;color:#e3f3ff}
+.social-pop h2 span{color:var(--c-red2)}
+.social-pop p{margin:0 0 14px;font-size:14px;line-height:1.5;opacity:.92}
+.social-pop-links{display:flex;gap:10px}
+.social-pop-links a{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(227,243,255,.25);color:#fff;text-decoration:none;font-weight:700;font-size:14px}
+.social-pop-links a:hover{background:rgba(255,255,255,.18)}
+.social-pop-links img{width:20px;height:20px}
+.social-pop-close{position:absolute;top:10px;right:10px;width:32px;height:32px;border:none;border-radius:8px;background:transparent;color:#fff;font-size:22px;line-height:1;cursor:pointer;opacity:.8}
+.social-pop-close:hover{opacity:1;background:rgba(255,255,255,.1)}
+@media (max-width:720px){.social-pop{right:16px;left:16px;bottom:16px;width:auto}}
+@media (prefers-reduced-motion:reduce){.social-pop{transition:none}}
 </style>
 </head>
 <body>
@@ -422,6 +439,7 @@ nav a:hover{opacity:1}
       <div class="hero-cta">
         <a class="btn" href="#distributeurs"><img class="star" src="images/star-white.webp" alt=""> Voir nos distributeurs</a>
       </div>
+      <p class="hero-gagnant"><strong>★ Soyez encore plus gagnants :</strong> promos, avantages et exclusivités vous attendent sur <a href="https://www.instagram.com/lasolina_pizzas/" target="_blank" rel="noopener">Instagram</a> et <a href="https://www.facebook.com/lasolina.pizzas/" target="_blank" rel="noopener">Facebook</a>.</p>
     </div>
     <div class="hero-right" aria-hidden="true"></div>
   </section>
@@ -533,6 +551,46 @@ nav a:hover{opacity:1}
   </div>
 </section>
 </main>
+
+<!-- ===== Pop-up réseaux sociaux (1 fois tous les 7 jours, après 12 s ou en descendant la page) ===== -->
+<aside class="social-pop" id="social-pop" role="dialog" aria-labelledby="social-pop-title" aria-hidden="true">
+  <button class="social-pop-close" type="button" aria-label="Fermer">×</button>
+  <h2 id="social-pop-title">VOUS ÊTES <span>GAGNANTS</span></h2>
+  <p>Promos, avantages et exclusivités : les offres du moment sont sur nos réseaux. Suivez-nous pour en profiter !</p>
+  <div class="social-pop-links">
+    <a href="https://www.instagram.com/lasolina_pizzas/" target="_blank" rel="noopener"><img src="images/IG.png" alt="" /> Instagram</a>
+    <a href="https://www.facebook.com/lasolina.pizzas/" target="_blank" rel="noopener"><img src="images/FB.png" alt="" /> Facebook</a>
+  </div>
+</aside>
+<script>
+(()=>{
+  const pop = document.getElementById('social-pop');
+  if (!pop) return;
+  const KEY = 'solina-social-pop', WEEK = 7*24*3600*1000;
+  try { if (Date.now() - Number(localStorage.getItem(KEY) || 0) < WEEK) return; } catch(e) {}
+
+  let shown = false;
+  function open(){
+    if (shown) return;
+    shown = true;
+    pop.classList.add('show');
+    pop.setAttribute('aria-hidden','false');
+    window.removeEventListener('scroll', onScroll);
+  }
+  function close(){
+    pop.classList.remove('show');
+    pop.setAttribute('aria-hidden','true');
+    try { localStorage.setItem(KEY, String(Date.now())); } catch(e) {}
+  }
+  function onScroll(){ if (window.scrollY > window.innerHeight * 1.5) open(); }
+
+  setTimeout(open, 12000);
+  window.addEventListener('scroll', onScroll, {passive:true});
+  pop.querySelector('.social-pop-close').addEventListener('click', close);
+  pop.querySelectorAll('.social-pop-links a').forEach(a => a.addEventListener('click', close));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && shown) close(); });
+})();
+</script>
 
 <!-- ===== Header: azur à mi-HERO, desktop only, robuste ===== -->
 <script>
