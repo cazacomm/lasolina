@@ -6,12 +6,21 @@
     <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
     <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
     <language>fr-FR</language>
-    <lastBuildDate>Mon, 12 Oct 2026 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 19 Oct 2026 09:00:00 +0200</lastBuildDate>
     <image>
       <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
       <title>Le blog La Solina</title>
       <link>https://www.lasolinapizza.fr/blog/</link>
     </image>
+
+    <item>
+      <title>Le secret de l'approvisionnement de nos distributeurs</title>
+      <link>https://www.lasolinapizza.fr/blog/comment-distributeurs-pizzas-sont-approvisionnes-tarbes/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/comment-distributeurs-pizzas-sont-approvisionnes-tarbes/</guid>
+      <pubDate>Mon, 19 Oct 2026 09:00:00 +0200</pubDate>
+      <category>Blog</category>
+      <description>À Tarbes, savourer une pizza artisanale à toute heure est un jeu d'enfant grâce à nos distributeurs automatiques. Mais comment ces machines sont-elles approvisionnées pour garantir une qualité constante et des produits frais ? Plongez dans les coulisses de notre logistique, qui s'étend de Séméac à Lourdes, et découvrez comment nous assurons un service 24h/24 dans le bassin tarbais.</description>
+    </item>
 
     <item>
       <title>Réchauffer une pizza : astuces infaillibles</title>
