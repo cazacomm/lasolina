@@ -6,12 +6,21 @@
     <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
     <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
     <language>fr-FR</language>
-    <lastBuildDate>Mon, 19 Oct 2026 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 26 Oct 2026 09:00:00 +0200</lastBuildDate>
     <image>
       <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
       <title>Le blog La Solina</title>
       <link>https://www.lasolinapizza.fr/blog/</link>
     </image>
+
+    <item>
+      <title>Trouver un distributeur de pizzas à Aureilhan</title>
+      <link>https://www.lasolinapizza.fr/blog/meilleurs-emplacements-distributeurs-pizzas-aureilhan/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/meilleurs-emplacements-distributeurs-pizzas-aureilhan/</guid>
+      <pubDate>Mon, 26 Oct 2026 09:00:00 +0200</pubDate>
+      <category>Blog</category>
+      <description>Vous habitez Aureilhan et recherchez un distributeur de pizzas artisanales à proximité ? Découvrez les emplacements de nos distributeurs automatiques dans le bassin tarbais. Pizzas préparées à la main, disponibles 24h/24 et 7j/7, vous n'êtes jamais loin d'une délicieuse pizza chaude ou froide, prête en quelques minutes. Explorez notre guide pour savoir où vous rendre.</description>
+    </item>
 
     <item>
       <title>Le secret de l'approvisionnement de nos distributeurs</title>

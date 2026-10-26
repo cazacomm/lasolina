@@ -9,7 +9,7 @@
   </url>
   <url>
     <loc>https://www.lasolinapizza.fr/blog/</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -94,6 +94,12 @@
   <url>
     <loc>https://www.lasolinapizza.fr/blog/comment-distributeurs-pizzas-sont-approvisionnes-tarbes/</loc>
     <lastmod>2026-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.lasolinapizza.fr/blog/meilleurs-emplacements-distributeurs-pizzas-aureilhan/</loc>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
