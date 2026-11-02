@@ -6,12 +6,21 @@
     <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
     <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
     <language>fr-FR</language>
-    <lastBuildDate>Mon, 26 Oct 2026 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 02 Nov 2026 09:00:00 +0200</lastBuildDate>
     <image>
       <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
       <title>Le blog La Solina</title>
       <link>https://www.lasolinapizza.fr/blog/</link>
     </image>
+
+    <item>
+      <title>Découvrez nos ingrédients locaux pour des pizzas savoureuses</title>
+      <link>https://www.lasolinapizza.fr/blog/quels-ingredients-locaux-sont-utilises-pizzas-artisanales/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/quels-ingredients-locaux-sont-utilises-pizzas-artisanales/</guid>
+      <pubDate>Mon, 02 Nov 2026 09:00:00 +0200</pubDate>
+      <category>Blog</category>
+      <description>Chez La Solina, nous sommes fiers de proposer des pizzas artisanales préparées avec des ingrédients locaux rigoureusement sélectionnés. Implantés au cœur des Hautes-Pyrénées, à Tarbes, nous valorisons les produits de notre terroir pour offrir une expérience gustative unique à travers nos distributeurs automatiques accessibles 24h/24. Découvrez notre engagement envers la qualité et la fraîcheur des produits locaux qui composent nos délicieuses pizzas.</description>
+    </item>
 
     <item>
       <title>Trouver un distributeur de pizzas à Aureilhan</title>
