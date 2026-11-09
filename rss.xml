@@ -6,12 +6,21 @@
     <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
     <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
     <language>fr-FR</language>
-    <lastBuildDate>Mon, 02 Nov 2026 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 09 Nov 2026 09:00:00 +0200</lastBuildDate>
     <image>
       <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
       <title>Le blog La Solina</title>
       <link>https://www.lasolinapizza.fr/blog/</link>
     </image>
+
+    <item>
+      <title>La météo et la consommation de pizzas à Tarbes</title>
+      <link>https://www.lasolinapizza.fr/blog/comment-meteo-influence-consommation-pizzas-tarbes/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/comment-meteo-influence-consommation-pizzas-tarbes/</guid>
+      <pubDate>Mon, 09 Nov 2026 09:00:00 +0200</pubDate>
+      <category>Blog</category>
+      <description>À Tarbes, la météo joue un rôle important dans les habitudes de consommation de pizzas. Les variations climatiques influencent les choix des consommateurs, qu'ils préfèrent une pizza chaude en hiver ou une pizza froide en été. Dans le bassin tarbais, où le climat peut varier rapidement, les distributeurs automatiques de La Solina offrent une solution flexible et pratique pour satisfaire toutes les envies.</description>
+    </item>
 
     <item>
       <title>Découvrez nos ingrédients locaux pour des pizzas savoureuses</title>
