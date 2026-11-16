@@ -6,12 +6,21 @@
     <atom:link href="https://www.lasolinapizza.fr/rss.xml" rel="self" type="application/rss+xml" />
     <description>Conseils, coulisses et bons plans autour de la pizza artisanale en distributeur à Tarbes et dans les Hautes-Pyrénées.</description>
     <language>fr-FR</language>
-    <lastBuildDate>Mon, 09 Nov 2026 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 16 Nov 2026 09:00:00 +0200</lastBuildDate>
     <image>
       <url>https://www.lasolinapizza.fr/images/logo-dark.jpeg</url>
       <title>Le blog La Solina</title>
       <link>https://www.lasolinapizza.fr/blog/</link>
     </image>
+
+    <item>
+      <title>Savourez nos pizzas artisanales à Ibos</title>
+      <link>https://www.lasolinapizza.fr/blog/ibos-decouvrir-distributeurs-pizzas-famille/</link>
+      <guid isPermaLink="true">https://www.lasolinapizza.fr/blog/ibos-decouvrir-distributeurs-pizzas-famille/</guid>
+      <pubDate>Mon, 16 Nov 2026 09:00:00 +0200</pubDate>
+      <category>Blog</category>
+      <description>À Ibos, dans le bassin tarbais, une expérience culinaire vous attend avec nos distributeurs de pizzas artisanales. Profitez de votre prochaine sortie en famille pour savourer une pizza préparée à la main le matin avec des produits frais, à tout moment de la journée ou de la nuit. Nos distributeurs automatiques, accessibles 24h/24, vous offrent une pause gourmande simple et rapide.</description>
+    </item>
 
     <item>
       <title>La météo et la consommation de pizzas à Tarbes</title>

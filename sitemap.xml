@@ -9,7 +9,7 @@
   </url>
   <url>
     <loc>https://www.lasolinapizza.fr/blog/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -112,6 +112,12 @@
   <url>
     <loc>https://www.lasolinapizza.fr/blog/comment-meteo-influence-consommation-pizzas-tarbes/</loc>
     <lastmod>2026-11-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.lasolinapizza.fr/blog/ibos-decouvrir-distributeurs-pizzas-famille/</loc>
+    <lastmod>2026-11-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
